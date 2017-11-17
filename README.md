@@ -87,7 +87,7 @@ dependencies {
 On top, where imports are:
 
 ```java
-import com.brentvatne.react.ReactKSYVideoPackage;
+import com.ksyun.media.reactnative.ReactKSYVideoPackage;
 ```
 
 Add the `ReactKSYVideoPackage` class to your list of exported packages.

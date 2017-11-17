@@ -1,0 +1,14 @@
+{
+  "name": "react-native-ksyvideo",
+  "version": "1.0.0",
+  "main": "KSYVideo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ksy",
+  "license": "ISC",
+  "description": "A `<KSYVideo>` component for react-native, as seen in",
+  "directories": {
+    "example": "example"
+  }
+}

@@ -124,7 +124,7 @@ var styles = StyleSheet.create({
 ## Remarks
 If you want to updata native sdk for KSYVideo,make the following additions
 ### Android
-The KSYVideo is dependented on jcenter (https://bintray.com/ksvc/ksyplayer),you can modify the dependencies ,update to high version
+The KSYVideo is dependented on jcenter (https://bintray.com/ksvc/ksyplayer) ,you can modify the dependencies ,update to high version
 
 build.gradle(Module:react-native-ksyvideo)
 dependencies {

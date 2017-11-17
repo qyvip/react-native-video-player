@@ -127,13 +127,13 @@ If you want to updata native sdk for KSYVideo,make the following additions
 The KSYVideo is dependented on jcenter (https://bintray.com/ksvc/ksyplayer) ,you can modify the dependencies ,update to high version
 
 build.gradle(Module:react-native-ksyvideo)
-
+```java
 dependencies {
-    compile "com.facebook.react:react-native:+"  // From node_modules
 
+    compile "com.facebook.react:react-native:+"  // From node_modules
     compile 'com.ksyun.media:libksyplayer-arm64:2.1.0'
     compile 'com.ksyun.media:libksyplayer-x86:2.1.0'
     compile 'com.ksyun.media:libksyplayer-armv7a:2.1.0'
     compile 'com.ksyun.media:libksyplayer-java:2.1.0'
 }
-
+```

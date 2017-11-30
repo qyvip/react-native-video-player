@@ -3,12 +3,10 @@ package com.ksyvideoplayer;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.eguma.barcodescanner.BarcodeScannerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.ksyun.media.reactnative.ReactKSYVideoPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,9 +22,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new BarcodeScannerPackage(),
-              new ReactKSYVideoPackage()
+          new MainReactPackage()
       );
     }
 

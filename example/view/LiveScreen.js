@@ -22,7 +22,7 @@ import AudioController from './AudioController'
 export default class LiveScreen extends Component {
     constructor(props) {
       super(props);
-      this.state = {showbar: true, degree: 270 , mirror: false, record: 0, volume: 0.5};
+      this.state = {showbar: true, degree: 0 , mirror: false, record: 0, volume: 0.5};
     }
 
     onPressRotate(){
@@ -53,15 +53,17 @@ export default class LiveScreen extends Component {
               source={{uri:params.user}}
               bufferSize={30}
               bufferTime={4}
+              repeat={true}
               mirror={this.state.mirror}
               degree={this.state.degree}
+              resizeMode={'contain'}
               volume={volume}
               onTouch={()=>{
                               if (!this.state.record)
                                 this.setState({showbar: !this.state.showbar})
                             }
                       }
-              onLoad={(data)=>{console.log("JS onPrepared");}}
+              onLoad={(data)=>{console.log("JS onPrepared, video size = " + data.naturalSize.width + "x" +  data.naturalSize.height);}}
               onEnd={(data)=>{this.props.navigation.goBack();console.log("JS onCompletion");}}
               onError={(data)=>{this.props.navigation.goBack();console.log("JS onError" + data.what + data.extra);}}
               style={styles.fullScreen}

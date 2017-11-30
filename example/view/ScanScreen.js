@@ -6,7 +6,7 @@ import {
   Vibration,
   View
 } from 'react-native';
-import BarcodeScanner from 'react-native-barcodescanner';
+import BarcodeScanner from 'react-native-camera';
 
 export default class ScanScreen extends Component {
   constructor(props) {

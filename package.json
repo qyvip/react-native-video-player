@@ -10,5 +10,16 @@
   "description": "A `<KSYVideo>` component for react-native, as seen in",
   "directories": {
     "example": "example"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ksvc/react-native-video-player.git"
+  },
+  "keywords": [
+    "video"
+  ],
+  "bugs": {
+    "url": "https://github.com/ksvc/react-native-video-player/issues"
+  },
+  "homepage": "https://github.com/ksvc/react-native-video-player#readme"
 }

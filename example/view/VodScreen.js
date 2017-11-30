@@ -87,6 +87,8 @@ export default class VodScreen extends Component {
               source={{uri:params.user}}
               timeout={{prepareTimeout:60, readTimeout:60}}
               paused={this.state.paused}
+              playInBackground={true}
+              controls={true}
               onTouch={()=>{
                               if (!this.state.record)
                                 this.setState({showbar: !this.state.showbar})
@@ -94,7 +96,7 @@ export default class VodScreen extends Component {
                       }
               onLoad={this._onLoad.bind(this)}
               onEnd={()=>{this.props.navigation.goBack();console.log("JS onCompletion");}}
-              onError={(data)=>{this.props.navigation.goBack();console.log("JS onError" + data.what + data.extra);}}
+              onError={(data)=>{this.props.navigation.goBack();console.log("JS onError:" + data.errorcode);}}
               onProgress={this._onProgress.bind(this)}
               onReadyForDisplay = {(data)=>{console.log("JS Video render start");}}
               style={styles.fullScreen}

@@ -19,7 +19,7 @@ class HomeScreen extends Component {
 //rtmp://live.hkstv.hk.lxdns.com/live/hks  http://192.168.77.35:8000/iphone7.mp4 /storage/emulated/0/Download/iphone7.mp4 /storage/emulated/0/Download/bbb_720p_qy265.flv
   constructor(props) {
       super(props);
-      this.state = { text: '/storage/emulated/0/Download/iphone7.mp4' };
+      this.state = { text: 'rtmp://live.hkstv.hk.lxdns.com/live/hks' };
     }
 
   render() {
@@ -41,6 +41,7 @@ class HomeScreen extends Component {
           </TouchableOpacity>
 
         </View>
+
         <TouchableOpacity style={{marginTop:10}} >
           <Button
             onPress={() =>  navigate('PlayVod', { user: value }) }

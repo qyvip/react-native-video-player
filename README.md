@@ -103,7 +103,13 @@ protected List<ReactPackage> getPackages() {
 ```
 
 ### 3. iOS Integration
-*coming soon*
+
+Run `react-native link` to link the react-native-ksyvideo library.
+
+Add KSYMediaPlayer.framework(which is in node_modules/react-native-ksyvideo/ios directory) to your project setting 'target->Build Phases->Link Binary With Libraries'.
+
+Add Framework Search Path : 'node_modules/react-native-ksyvideo/ios'
+
 
 ### 4. Remarks
 If you want to updata native sdk for KSYVideo,make the following additions
@@ -125,7 +131,7 @@ dependencies {
 
 #### 4.2 iOS
 
-*coming soon*
+Get the latest framework of KSYMeidaPlayer_iOS at https://github.com/ksvc/KSYMediaPlayer_iOS/releases, then replace the old framework in node_modules/react-native-ksyvideo/ios directory
 
 ### 5. LICENSE
 [Apache 2.0](LICENSE)

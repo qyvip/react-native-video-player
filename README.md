@@ -1,4 +1,7 @@
 ## react-native-video-player
+<pre>Source Type:<b> Open Source</b></pre>
+
+
 > Media Player for React-Native, base on KSYMediaPlayer.
 
 More details about KSYMediaPlayer, please click the link blow:

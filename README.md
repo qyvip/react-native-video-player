@@ -16,9 +16,7 @@ More details about KSYMediaPlayer, please click the link blow:
 
 ### 1. About
 
-A `<KSYVideo>` component for react-native, as seen in
-
-Requires react-native >= 0.49.0
+A `<KSYVideo>` component for react-native,requires react-native >= 0.49.0
 
 #### 1.1 Add it to your project
 * Install via npm

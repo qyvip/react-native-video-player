@@ -9,9 +9,9 @@ More details about KSYMediaPlayer, please click the link blow:
 * [KSYMediaPlayer Android SDK for vod or live streaming playing][player_android]
 * [KSYMediaPlayer iOS SDK for vod or live streaming playing][player_ios]
 
-*Only Android support now.*
+*Android support*
 
-*iOS support soon.*
+*iOS support*
 
 
 ### 1. About

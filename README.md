@@ -115,7 +115,7 @@ Add Framework Search Path : 'node_modules/react-native-ksyvideo/ios'
 ### 4. Remarks
 If you want to updata native sdk for KSYVideo,make the following additions
 #### 4.1 Android
-The KSYVideo is dependented on [jcenter] (https://bintray.com/ksvc/ksyplayer) ,you can modify the dependencies ,update to high version
+The KSYVideo is dependented on [jcenter](https://bintray.com/ksvc/ksyplayer),you can modify the dependencies ,update to high version
 
 build.gradle(Module:react-native-ksyvideo)
 ```gradle

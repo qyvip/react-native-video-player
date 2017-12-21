@@ -109,7 +109,7 @@ Run `react-native link` to link the react-native-ksyvideo library.
 
 Add KSYMediaPlayer.framework(which is in node_modules/react-native-ksyvideo/ios directory) to your project setting 'target->Build Phases->Link Binary With Libraries'.
 
-Add Framework Search Path : 'node_modules/react-native-ksyvideo/ios'
+Add Framework Search Path : '../node_modules/react-native-ksyvideo/ios'
 
 
 ### 4. Remarks

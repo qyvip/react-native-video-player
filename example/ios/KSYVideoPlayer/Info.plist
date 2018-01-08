@@ -55,13 +55,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-  <key>NSCameraUsageDescription</key>
-  <string>cameraDesciption</string>
-  <key>NSContactsUsageDescription</key>
-  <string>contactsDesciption</string>
-  <key>NSMicrophoneUsageDescription</key>
-  <string>microphoneDesciption</string>
-  <key>NSPhotoLibraryUsageDescription</key>
-  <string>photoLibraryDesciption</string>
+	<key>NSCameraUsageDescription</key>
+	<string>cameraDesciption</string>
+	<key>NSContactsUsageDescription</key>
+	<string>contactsDesciption</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>microphoneDesciption</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>photoLibraryDesciption</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>photoLibraryDesciption</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>nfcLibraryDesciption</string>
 </dict>
 </plist>

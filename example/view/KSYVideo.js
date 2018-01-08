@@ -117,11 +117,15 @@ export default class KSYVideo extends Component {
     render(){
         const source = this.props.source;
         let uri = source.uri;
+        let width = source.width;
+        let height = source.height;
         const nativeProps = Object.assign({}, this.props);
         Object.assign(nativeProps, {
             
             src: {
                 uri,
+                width,
+                height
             },
             onVideoTouch:this._onTouch,
             onVideoLoadStart: this._onLoadStart,

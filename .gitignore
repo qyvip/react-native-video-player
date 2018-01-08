@@ -28,3 +28,11 @@ build/
 xcuserdata
 xcshareddata
 *.xccheckout
+android/android.iml
+
+android/gradlew\.bat
+
+android/gradlew
+
+android/gradle/wrapper/
+android/local.properties

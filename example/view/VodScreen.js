@@ -81,10 +81,10 @@ export default class VodScreen extends Component {
             <StatusBar
               hidden={!this.state.showbar}
               />
-          
+          <View style={{width:100,height:20,backgroundColor:'#ccc'}}></View>
           <KSYVideo
               ref={(video)=>{this.video = video}}
-              source={{uri:params.user}}
+              source={{uri:params.user,width:300,height:200}}
               timeout={{prepareTimeout:60, readTimeout:60}}
               paused={this.state.paused}
               playInBackground={true}
@@ -144,17 +144,19 @@ const styles = StyleSheet.create({
     flex: 1,
     //justifyContent: 'center',
     //alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: 'black',
+    // justifyContent: 'space-between',
+    backgroundColor: 'red',
   },
 
   fullScreen: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
+    // position: 'absolute',
+    top: 10,
+    left: 30,
     bottom: 0,
     right: 0,
-    backgroundColor: 'black',
+width:350,
+height:200,
+    backgroundColor: 'blue',
   },
 
  controller: {

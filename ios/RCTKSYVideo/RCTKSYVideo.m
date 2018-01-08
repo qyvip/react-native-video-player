@@ -22,6 +22,8 @@
     BOOL _paused;
     BOOL _playInBackground;
     BOOL _playWhenInactive;
+    
+    
 }
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher {
@@ -31,6 +33,7 @@
         registeredNotifications = [[NSMutableArray alloc] init];
         [self setupObservers:_player];
         [_player addObserver:self forKeyPath:@"currentPlaybackTime" options:nil context:nil];
+        
         [self addSubview:_player.view];
         
         _playInBackground = false;
@@ -98,6 +101,12 @@
     
     if(self.onVideoLoadStart) {
         self.onVideoLoadStart(@{});
+    }
+    
+    NSNumber* playerWidth = [source objectForKey:@"width"];
+    NSNumber* playerHeight = [source objectForKey:@"height"];
+    if (playerWidth > 0 && playerHeight > 0){
+        _player.view.frame = CGRectMake(0, 0, playerWidth.intValue, playerHeight.intValue);
     }
 }
 

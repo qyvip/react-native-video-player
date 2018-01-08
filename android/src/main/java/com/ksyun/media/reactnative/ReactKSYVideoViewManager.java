@@ -110,6 +110,7 @@ public class ReactKSYVideoViewManager extends SimpleViewManager<ReactKSYVideoVie
     public void setSource(ReactKSYVideoView videoView, @Nullable ReadableMap src){
         String source = src.getString(PROP_SRC_URI);
         videoView.setDataSource(source);
+        videoView.
     }
 
     @ReactProp(name = PROP_RESIZE_MODE)

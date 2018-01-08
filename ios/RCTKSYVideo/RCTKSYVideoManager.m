@@ -5,10 +5,9 @@
 //  Created by mayudong on 2017/11/27.
 //  Copyright © 2017年 mayudong. All rights reserved.
 //
-
 #import "RCTKSYVideoManager.h"
 #import "RCTKSYVideo.h"
-
+#import <AVFoundation/AVFoundation.h>
 @implementation RCTKSYVideoManager
 
 RCT_EXPORT_MODULE()
@@ -17,7 +16,9 @@ RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-    return [[RCTKSYVideo alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+    self.ksyVideo = [[RCTKSYVideo alloc]initWithEventDispatcher:self.bridge.eventDispatcher];
+    return self.ksyVideo;
+//    return [[RCTKSYVideo alloc]initWithEventDispatcher:self.bridge.eventDispatcher];
 }
 
 - (dispatch_queue_t)methodQueue
@@ -58,10 +59,13 @@ RCT_EXPORT_VIEW_PROPERTY(onPlaybackResume, RCTBubblingEventBlock);
 
 //供js调用的函数，暂时没有实现
 RCT_EXPORT_METHOD(saveBitmap:data){
+    [self.ksyVideo saveBitmap:data];
 }
 RCT_EXPORT_METHOD(recordVideo:data){
+    [self.ksyVideo recordVideo:data];
 }
 RCT_EXPORT_METHOD(stopRecordVideo:data){
+    [self.ksyVideo stopRecordVideo:data];
 }
 
 @end

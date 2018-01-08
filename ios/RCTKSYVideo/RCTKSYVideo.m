@@ -15,6 +15,8 @@
     RCTEventDispatcher *_eventDispatcher;
     KSYMoviePlayerController *_player;
     
+//    KSYAVWriter *_AVWriter;
+    
     NSMutableArray *registeredNotifications;
     float prepareTimeout;
     float readTimeout;
@@ -353,6 +355,63 @@
     [self releaseObservers:_player];
     [_player.view removeFromSuperview];
     _player = nil;
+}
+
+- (void)saveBitmap:(NSString *)data
+{
+    UIImage *image = [_player thumbnailImageAtCurrentTime];
+    UIImageWriteToSavedPhotosAlbum(image, self, nil, nil);
+//    NSMutableArray *imageIds = [NSMutableArray array];
+//    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+//
+//        //写入图片到相册
+//        PHAssetChangeRequest *req = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+//        //记录本地标识，等待完成后取到相册中的图片对象
+//        [imageIds addObject:req.placeholderForCreatedAsset.localIdentifier];
+//
+//
+//    } completionHandler:^(BOOL success, NSError * _Nullable error) {
+//
+//        NSLog(@"success = %d, error = %@", success, error);
+//
+//        if (success)
+//        {
+//            //成功后取相册中的图片对象
+//            __block PHAsset *imageAsset = nil;
+//            PHFetchResult *result = [PHAsset fetchAssetsWithLocalIdentifiers:imageIds options:nil];
+//            [result enumerateObjectsUsingBlock:^(PHAsset * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//
+//                imageAsset = obj;
+//                *stop = YES;
+//
+//            }];
+//
+//            if (imageAsset)
+//            {
+//                //加载图片数据
+//                [[PHImageManager defaultManager] requestImageDataForAsset:imageAsset
+//                                                                  options:nil
+//                                                            resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+//
+//                                                                NSLog("imageData = %@", imageData);
+//
+//                                                            }];
+//            }
+//        }
+//
+//    }];
+}
+
+- (void)recordVideo:(NSString *)data
+{
+//    _AVWriter = [[KSYAVWriter alloc]initWithDefaultCfg];
+//    [_AVWriter setUrl:[NSURL URLWithString:[NSString stringWithFormat:@"%@%s", NSHomeDirectory(), "/Documents/PlayerRec.mp4"]]];
+}
+
+- (void)stopRecordVideo:(NSString *)data
+{
+    //停止写入
+//    [_AVWriter stopRecord];
 }
 
 @end

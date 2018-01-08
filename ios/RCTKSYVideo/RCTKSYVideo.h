@@ -8,6 +8,7 @@
 
 #import <React/RCTView.h>
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 @class RCTEventDispatcher;
 
@@ -27,5 +28,7 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onPlaybackResume;
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher NS_DESIGNATED_INITIALIZER;
-
+- (void)saveBitmap:(NSString *)data;
+- (void)recordVideo:(NSString *)data;
+- (void)stopRecordVideo:(NSString *)data;
 @end

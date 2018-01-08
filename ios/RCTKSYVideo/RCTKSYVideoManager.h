@@ -8,6 +8,12 @@
 
 #import <React/RCTViewManager.h>
 
+
+@class RCTKSYVideo;
+
 @interface RCTKSYVideoManager : RCTViewManager
+
+@property (nonatomic, strong) RCTKSYVideo *ksyVideo;
+
 
 @end

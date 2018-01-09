@@ -47,6 +47,11 @@ export default class VodScreen extends Component {
        this.setState({ currentTime: data.currentTime });
       }
     }
+
+    _onVideoSaveBitmap(data){
+      alert(data);
+      console.log("视频截图返回结果：",data);
+    }
     
     onProgressChanged(newPercent, paused) {
         if (paused){
@@ -84,7 +89,8 @@ export default class VodScreen extends Component {
           <View style={{width:100,height:20,backgroundColor:'#ccc'}}></View>
           <KSYVideo
               ref={(video)=>{this.video = video}}
-              source={{uri:params.user,width:300,height:200}}
+              source={{uri:params.user}}
+              videoFrame={{x:10,y:200,width:300,height:200}}
               timeout={{prepareTimeout:60, readTimeout:60}}
               paused={this.state.paused}
               playInBackground={true}
@@ -99,6 +105,7 @@ export default class VodScreen extends Component {
               onError={(data)=>{this.props.navigation.goBack();console.log("JS onError:" + data.errorcode);}}
               onProgress={this._onProgress.bind(this)}
               onReadyForDisplay = {(data)=>{console.log("JS Video render start");}}
+              onVideoSaveBitmap = {this._onVideoSaveBitmap.bind(this)}
               style={styles.fullScreen}
             />
         

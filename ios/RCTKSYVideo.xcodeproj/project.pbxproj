@@ -10,6 +10,7 @@
 		3925CB651FCBF77E00261CF0 /* RCTKSYVideoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3925CB641FCBF77E00261CF0 /* RCTKSYVideoManager.m */; };
 		3925CB7B1FCBFC2E00261CF0 /* RCTKSYVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3925CB7A1FCBFC2E00261CF0 /* RCTKSYVideo.m */; };
 		3925CB851FCC023600261CF0 /* KSYMediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3925CB841FCC023600261CF0 /* KSYMediaPlayer.framework */; };
+		4CE4617A2005190000AD2D2F /* FileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CE461792005190000AD2D2F /* FileManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,8 @@
 		3925CB791FCBFC2E00261CF0 /* RCTKSYVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTKSYVideo.h; sourceTree = "<group>"; };
 		3925CB7A1FCBFC2E00261CF0 /* RCTKSYVideo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTKSYVideo.m; sourceTree = "<group>"; };
 		3925CB841FCC023600261CF0 /* KSYMediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KSYMediaPlayer.framework; sourceTree = "<group>"; };
+		4CE461792005190000AD2D2F /* FileManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileManager.m; sourceTree = "<group>"; };
+		4CE4617B2005191600AD2D2F /* FileManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +68,8 @@
 		3925CB361FCBF4C900261CF0 /* RCTKSYVideo */ = {
 			isa = PBXGroup;
 			children = (
+				4CE461792005190000AD2D2F /* FileManager.m */,
+				4CE4617B2005191600AD2D2F /* FileManager.h */,
 				3925CB631FCBF77E00261CF0 /* RCTKSYVideoManager.h */,
 				3925CB641FCBF77E00261CF0 /* RCTKSYVideoManager.m */,
 				3925CB791FCBFC2E00261CF0 /* RCTKSYVideo.h */,
@@ -132,6 +137,7 @@
 			files = (
 				3925CB651FCBF77E00261CF0 /* RCTKSYVideoManager.m in Sources */,
 				3925CB7B1FCBFC2E00261CF0 /* RCTKSYVideo.m in Sources */,
+				4CE4617A2005190000AD2D2F /* FileManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

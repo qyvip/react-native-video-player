@@ -27,6 +27,8 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onPlaybackStalled;
 @property (nonatomic, copy) RCTBubblingEventBlock onPlaybackResume;
 
+@property (nonatomic, copy) RCTBubblingEventBlock onVideoSaveBitmap;
+
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher NS_DESIGNATED_INITIALIZER;
 - (void)saveBitmap:(NSString *)data;
 - (void)recordVideo:(NSString *)data;

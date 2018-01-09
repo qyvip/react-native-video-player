@@ -39,6 +39,7 @@ RCT_EXPORT_VIEW_PROPERTY(mirror, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(volume, float);
 RCT_EXPORT_VIEW_PROPERTY(degree, int);
 RCT_EXPORT_VIEW_PROPERTY(playInBackground, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(videoFrame, NSDictionary);
 //RCT_EXPORT_VIEW_PROPERTY(playWhenInactive, BOOL);
 
 
@@ -55,7 +56,7 @@ RCT_EXPORT_VIEW_PROPERTY(onReadyForDisplay, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onPlaybackStalled, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onPlaybackResume, RCTBubblingEventBlock);
 
-
+RCT_EXPORT_VIEW_PROPERTY(onVideoSaveBitmap, RCTBubblingEventBlock);
 
 //供js调用的函数，暂时没有实现
 RCT_EXPORT_METHOD(saveBitmap:data){

@@ -98,6 +98,12 @@ export default class KSYVideo extends Component {
         );
     }
 
+    _onVideoSaveBitmap = (event) => {
+        if (this.props.onVideoSaveBitmap) {
+            this.props.onVideoSaveBitmap(event.nativeEvent);
+        }
+    }
+
     recordVideo(){
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this.refs[RCT_VIDEO_REF]),
@@ -117,15 +123,11 @@ export default class KSYVideo extends Component {
     render(){
         const source = this.props.source;
         let uri = source.uri;
-        let width = source.width;
-        let height = source.height;
         const nativeProps = Object.assign({}, this.props);
         Object.assign(nativeProps, {
             
             src: {
-                uri,
-                width,
-                height
+                uri
             },
             onVideoTouch:this._onTouch,
             onVideoLoadStart: this._onLoadStart,
@@ -137,6 +139,7 @@ export default class KSYVideo extends Component {
             onReadyForDisplay: this._onReadyForDisplay,
             onPlaybackStalled: this._onPlaybackStalled,
             onPlaybackResume: this._onPlaybackResume,
+            onVideoSaveBitmap: this._onVideoSaveBitmap,
         });
 
         return (  
@@ -151,6 +154,7 @@ KSYVideo.propTypes = {
     /* Native only */
     style: ViewPropTypes.style,
     src: PropTypes.object,
+    videoFrame: PropTypes.object,
     seek: PropTypes.number,
     onVideoTouch: PropTypes.func,
     onVideoLoadStart: PropTypes.func,
@@ -193,7 +197,7 @@ KSYVideo.propTypes = {
     onReadyForDisplay: PropTypes.func,
     onPlaybackStalled: PropTypes.func,
     onPlaybackResume: PropTypes.func,
-
+    onVideoSaveBitmap: PropTypes.func,
     ...View.propTypes,
 };
 

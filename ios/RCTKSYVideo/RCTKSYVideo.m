@@ -8,6 +8,7 @@
 
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventDispatcher.h>
+#import "FileManager.h"
 #import "RCTKSYVideo.h"
 #import <KSYMediaPlayer/KSYMediaPlayer.h>
 
@@ -104,12 +105,19 @@
     if(self.onVideoLoadStart) {
         self.onVideoLoadStart(@{});
     }
-    
-    NSNumber* playerWidth = [source objectForKey:@"width"];
-    NSNumber* playerHeight = [source objectForKey:@"height"];
-    if (playerWidth > 0 && playerHeight > 0){
-        _player.view.frame = CGRectMake(0, 0, playerWidth.intValue, playerHeight.intValue);
+}
+
+- (void)setVideoFrame:(NSDictionary *)videoFrame {
+    if (videoFrame){
+        NSNumber* playerX = [videoFrame objectForKey:@"x"];
+        NSNumber* playerY = [videoFrame objectForKey:@"y"];
+        NSNumber* playerWidth = [videoFrame objectForKey:@"width"];
+        NSNumber* playerHeight = [videoFrame objectForKey:@"height"];
+        //    if (playerWidth > 0 && playerHeight > 0){
+        _player.view.frame = CGRectMake(playerX.intValue, playerY.intValue, playerWidth.intValue, playerHeight.intValue);
+        //    }
     }
+    
 }
 
 - (void)setSeek:(float)seekTime {
@@ -359,47 +367,38 @@
 
 - (void)saveBitmap:(NSString *)data
 {
-    UIImage *image = [_player thumbnailImageAtCurrentTime];
-    UIImageWriteToSavedPhotosAlbum(image, self, nil, nil);
-//    NSMutableArray *imageIds = [NSMutableArray array];
-//    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-//
-//        //写入图片到相册
-//        PHAssetChangeRequest *req = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
-//        //记录本地标识，等待完成后取到相册中的图片对象
-//        [imageIds addObject:req.placeholderForCreatedAsset.localIdentifier];
-//
-//
-//    } completionHandler:^(BOOL success, NSError * _Nullable error) {
-//
-//        NSLog(@"success = %d, error = %@", success, error);
-//
-//        if (success)
-//        {
-//            //成功后取相册中的图片对象
-//            __block PHAsset *imageAsset = nil;
-//            PHFetchResult *result = [PHAsset fetchAssetsWithLocalIdentifiers:imageIds options:nil];
-//            [result enumerateObjectsUsingBlock:^(PHAsset * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//
-//                imageAsset = obj;
-//                *stop = YES;
-//
-//            }];
-//
-//            if (imageAsset)
-//            {
-//                //加载图片数据
-//                [[PHImageManager defaultManager] requestImageDataForAsset:imageAsset
-//                                                                  options:nil
-//                                                            resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
-//
-//                                                                NSLog("imageData = %@", imageData);
-//
-//                                                            }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        int retState = 0;
+        NSString *newFileName;
+        UIImage *image = [_player thumbnailImageAtCurrentTime];
+        NSString *docmentPath = [[NSString alloc] initWithFormat:@"%@%s", [FileManager getDocumentPath], "/screenshots" ];
+//        if ([FileManager creatDir:docmentPath]){
+        [FileManager creatDir:docmentPath];
+            NSLog(@"创建截图目录成功:%i",retState);
+            newFileName = [FileManager getRandomFileName:@".png"];
+            NSData *data = UIImagePNGRepresentation(image);
+//            if ([FileManager creatFile:newFileName  withData:data]){
+        [FileManager creatFile:newFileName  withData:data];
+                NSLog(@"图片保存成功:%i",retState);
+                retState = 1;
+//            }else{
+//                NSLog(@"图片保存失败:%i",retState);
+//                retState = -2;
 //            }
+//        }else{
+//            NSLog(@"创建截图目录失败:%i",retState);
+//            retState = -1;
 //        }
-//
-//    }];
+        if(self.onVideoSaveBitmap) {
+            NSLog(@"图片保存成功:%@",@{@"path":docmentPath,
+                                 @"uri":newFileName,
+                                 @"state":[NSNumber numberWithInt:retState]});
+            self.onVideoSaveBitmap(@{@"path":docmentPath,
+                                     @"uri":newFileName,
+                                     @"state":[NSNumber numberWithInt:retState]});
+        }
+    });
+
 }
 
 - (void)recordVideo:(NSString *)data

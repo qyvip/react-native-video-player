@@ -55,7 +55,7 @@ export default class VodScreen extends Component {
       // alert(data.path);
       var uriPath;
 				if (Platform.OS === 'android') {
-					uriPath = response.uri;
+					uriPath = "file://"+data.uri;
 				} else {
 					uriPath = data.uri.replace('file://', '');
 				}
@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
-    width:10,
-    height:10,
+    width:300,
+    height:100,
     backgroundColor: 'blue',
   },
 

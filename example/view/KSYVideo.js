@@ -187,11 +187,13 @@ export default class KSYVideo extends Component {
     render(){
         const source = this.props.source;
         let uri = source.uri;
+        let autoPlay = source.autoPlay;
         const nativeProps = Object.assign({}, this.props);
         Object.assign(nativeProps, {
             
             src: {
-                uri
+                uri,
+                autoPlay:true
             },
             onVideoTouch:this._onTouch,
             onVideoLoadStart: this._onLoadStart,
@@ -273,5 +275,6 @@ const RCTKSYVideo = requireNativeComponent('RCTKSYVideo',KSYVideo,{
    nativeOnly: {
     src: true,
     seek: true,
+    auto: true
   },
 });

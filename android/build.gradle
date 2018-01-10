@@ -6,17 +6,31 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+    }
+
+    sourceSets.main {
+        jniLibs.srcDirs 'src/main/libs' // 动态库和jar的存放路径
+        jni.srcDirs = [] // This prevents the auto generation of Android.mk
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
     }
 }
 
 dependencies {
-    compile "com.facebook.react:react-native:+"  // From node_modules
-
-    compile 'com.ksyun.media:libksyplayer-arm64:2.1.0'
-    compile 'com.ksyun.media:libksyplayer-x86:2.1.0'
-    compile 'com.ksyun.media:libksyplayer-armv7a:2.1.0'
-    compile 'com.ksyun.media:libksyplayer-java:2.1.0'
+    compile 'com.facebook.react:react-native:+'
+    // From node_modules
+//    compile fileTree(include: ['*.jar'], dir: 'libs')
+//        compile 'com.ksyun.media:libksyplayer-arm64:2.1.2'
+//        compile 'com.ksyun.media:libksyplayer-x86:2.1.2'
+//        compile 'com.ksyun.media:libksyplayer-armv7a:2.1.2'
+//        compile 'com.ksyun.media:libksyplayer-java:2.1.2'
+    compile files('src/main/libs/libksyplayer.jar')
+    compile files('src/main/libs/libksystat.jar')
 }

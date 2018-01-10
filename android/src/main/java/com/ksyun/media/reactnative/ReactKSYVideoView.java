@@ -6,26 +6,27 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.ksyun.media.player.KSYMediaRecorder;
 import com.ksyun.media.player.IMediaPlayer;
 import com.ksyun.media.player.KSYMediaPlayer;
-import com.ksyun.media.player.KSYMediaRecorder;
+
+//import com.ksyun.media.player.KSYMediaRecorder;
 import com.ksyun.media.player.KSYTextureView;
 import com.ksyun.media.player.recorder.KSYMediaRecorderConfig;
 
@@ -33,6 +34,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,7 +56,10 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
         EVENT_END("onVideoEnd"),
         EVENT_STALLED("onPlaybackStalled"),
         EVENT_RESUME("onPlaybackResume"),
-        EVENT_READY_FOR_DISPLAY("onReadyForDisplay");
+        EVENT_READY_FOR_DISPLAY("onReadyForDisplay"),
+        EVENT_VIDEO_SAVE_BITMAP("onVideoSaveBitmap"),
+        EVENT_START_RECORD_VIDEO("onRecordVideo"),
+        EVENT_STOP_RECORD_VIDEO("onStopRecordVideo");
 
         private final String mName;
 
@@ -291,7 +298,7 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
     };
 
     private void init(Context context) {
-
+        Log.e(TAG, Build.VERSION.SDK_INT+"");
         mThemedReactContext = (ThemedReactContext) context;
         mEventEmitter = mThemedReactContext.getJSModule(RCTEventEmitter.class);
         mThemedReactContext.addLifecycleEventListener(this);
@@ -314,8 +321,11 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
         ksyTextureView.setBufferTimeMax(2.0f);
         ksyTextureView.setTimeout(5, 30);
 
-        videoFile = new File(Environment.getExternalStorageDirectory(), "DCIM/video");
-        imageFile = new File(Environment.getExternalStorageDirectory(), "DCIM/image");
+        /* 使用自动模式 */
+        ksyTextureView.setDecodeMode(KSYMediaPlayer.KSYDecodeMode.KSY_DECODE_MODE_AUTO);
+
+        videoFile = new File(Environment.getExternalStorageDirectory(), "records");
+        imageFile = new File(Environment.getExternalStorageDirectory(), "screenshots");
         if (!videoFile.exists()) {
             videoFile.mkdir();
         }
@@ -349,7 +359,12 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
     }
 
     public void saveBitmap() {
-        String imageName = System.currentTimeMillis() + ".jpg";
+        SimpleDateFormat formatter    =   new    SimpleDateFormat    ("yyyyMMdd-HHmmss");
+        Date curDate    =   new    Date(System.currentTimeMillis());//获取当前时间
+        String    str    =    formatter.format(curDate);
+        Random random = new Random();
+        int seq = random.nextInt(200);
+        String imageName = str +"-"+ seq + ".png";
         File file = new File(imageFile, imageName);
         FileOutputStream outputStream;
         Bitmap bitmap = ksyTextureView.getScreenShot();
@@ -359,19 +374,25 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
         }
         try {
             outputStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
             outputStream.flush();
             outputStream.close();
             //图片保存到相册
-            MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), imageName, null);
+//            MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), imageName, null);
             Uri uri = Uri.fromFile(file);
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+            WritableMap event = Arguments.createMap();
+            event.putString("uri", uri.getPath());
+            event.putString("path", file.getAbsolutePath());
+
+            mEventEmitter.receiveEvent(getId(), Events.EVENT_VIDEO_SAVE_BITMAP.toString(), event);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(context, "截图保存至相册!", Toast.LENGTH_SHORT).show();
+
+        //Toast.makeText(context, "截图保存至相册!", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -380,7 +401,13 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
             return;
         bRecord = true;
         KSYMediaRecorderConfig recorderConfig = new KSYMediaRecorderConfig();
-        String videoName = System.currentTimeMillis() + ".mp4";
+        SimpleDateFormat formatter    =   new    SimpleDateFormat    ("yyyyMMdd-HHmmss");
+        final long startTime = System.currentTimeMillis();
+        Date curDate    =   new    Date(startTime);//获取当前时间
+        String    str    =    formatter.format(curDate);
+        Random random = new Random();
+        int seq = random.nextInt(200);
+        String videoName = str +"-"+ seq + ".mp4";
         String outputPath = videoFile.getAbsolutePath() + "/" + videoName;
         final String videoPath = outputPath;
         recorderConfig.setVideoBitrate(800 * 1000); //码率设置为 800kbps
@@ -394,14 +421,23 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
             e.printStackTrace();
         }
         mMediaRecorder.start(); // 开始录制
+        WritableMap event = Arguments.createMap();
+        event.putString("uri", outputPath);
+        event.putString("path", videoFile.getAbsolutePath());
+        event.putString("fileName", videoName);
+        event.putDouble("startTime", startTime);
+        event.putInt("state", 1);
+        event.putString("msg", "StartRecord");
+        mEventEmitter.receiveEvent(getId(), Events.EVENT_START_RECORD_VIDEO.toString(), event);
 
         final Timer cap_timer = new Timer(true);
         TimerTask timerTask = new TimerTask() {
-            private int progress = 0;
+            //            private int progress = 0;
             @Override
             public void run() {
-                progress += 10;
-                if ((progress >= 3000 && !bRecord) || progress > 15000) {
+//                progress += 10;
+//                if ((progress >= 3000 && !bRecord) || progress > 15000) {
+                if (!bRecord) {
                     mMediaRecorder.stop();
                     mMediaRecorder = null;
                     File file = new File(videoPath);
@@ -411,11 +447,25 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
                         context = ((ContextWrapper) context).getBaseContext();
                     }
                     context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+                    WritableMap event = Arguments.createMap();
+                    event.putString("uri", uri.getPath());
+                    event.putString("path", videoFile.getAbsolutePath());
+
+                    long endTime = System.currentTimeMillis();
+                    event.putDouble("startTime", startTime);
+                    event.putDouble("endTime", endTime);
+                    event.putDouble("timeSpent", endTime - startTime);
+                    event.putDouble("fileSize", file.length());
+
+                    event.putInt("state", 1);
+                    event.putString("msg", "StopRecord");
+                    mEventEmitter.receiveEvent(getId(), Events.EVENT_STOP_RECORD_VIDEO.toString(), event);
                     cap_timer.cancel();
                 }
             }
         };
         cap_timer.schedule(timerTask, 0, 10);
+
     }
 
     public void saveVideo(){
@@ -427,7 +477,7 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
             ksyTextureView.prepareAsync();
     }
 
-    public void setDataSource(String url) {
+    public void setDataSource(String url, Boolean autoPlay) {
         WritableMap src = Arguments.createMap();
         src.putString(ReactKSYVideoViewManager.PROP_SRC_URI, url);
 
@@ -436,6 +486,7 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
         mEventEmitter.receiveEvent(getId(), Events.EVENT_LOAD_START.toString(), event);
 
         try {
+            ksyTextureView.shouldAutoPlay(autoPlay);
             ksyTextureView.setDataSource(url);
             ksyTextureView.prepareAsync();
         } catch (IOException e) {
@@ -648,5 +699,25 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
     public int getAudioSessionId() {
         return 0;
     }
+
+
+    //判断外部存储是否可以读写
+ public boolean isExternalStorageWritable() {
+      String state = Environment.getExternalStorageState();
+          if (Environment.MEDIA_MOUNTED.equals(state)) {
+                  return true;
+              }
+        return false;
+       }
+
+         //判断外部存储是否至少可以读
+         public boolean isExternalStorageReadable() {
+          String state = Environment.getExternalStorageState();
+          if (Environment.MEDIA_MOUNTED.equals(state) ||
+            Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+                return true;
+     }
+      return false;
+   }
 
 }

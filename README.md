@@ -16,6 +16,9 @@ DocumentPath + "/records"
 
 * 取图方法 *
 > 使用react-native-fs库进行取图操作，注意，需要对取出的列表进行倒序显示
+> 取文件时，在android上需要在路径前加"file://"
+
+
 
 ## react-native-video-player
 <pre>Source Type:<b> Open Source</b></pre>

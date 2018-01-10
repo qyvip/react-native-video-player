@@ -108,10 +108,13 @@
 
 - (void)setSrc:(NSDictionary *)source {
     NSString *uri = [source objectForKey:@"uri"];
+    BOOL *shouldAutoPlay = [[source objectForKey:@"autoPlay"] boolValue];
     NSURL* url = [NSURL URLWithString:uri];
     
     [_player reset:NO];
     [_player setUrl:url];
+    
+    _player.shouldAutoplay = shouldAutoPlay;
 
     [_player prepareToPlay];
     

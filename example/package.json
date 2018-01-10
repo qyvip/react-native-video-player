@@ -4,9 +4,11 @@
 	"private": true,
 	"scripts": {
 		"start": "node node_modules/react-native/local-cli/cli.js start",
+		"newclear": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf ios/build/ModuleCache/* && rm -rf node_modules/ && yarn cache clean && yarn install",
 		"test": "jest"
 	},
 	"dependencies": {
+		"moment": "^2.20.1",
 		"react": "16.0.0",
 		"react-native": "0.50.1",
 		"react-native-camera": "^0.12.0",

@@ -22,6 +22,7 @@ public class ReactKSYVideoViewManager extends SimpleViewManager<ReactKSYVideoVie
 
     public static final String PROP_SRC = "src";
     public static final String PROP_SRC_URI = "uri";
+    public static final String PROP_AUTO_PLAY = "autoPlay";
     public static final String PROP_SRC_TYPE = "type";
     public static final String PROP_SRC_IS_NETWORK = "isNetwork";
     public static final String PROP_SRC_MAINVER = "mainVer";
@@ -109,8 +110,8 @@ public class ReactKSYVideoViewManager extends SimpleViewManager<ReactKSYVideoVie
     @ReactProp(name = PROP_SRC)
     public void setSource(ReactKSYVideoView videoView, @Nullable ReadableMap src){
         String source = src.getString(PROP_SRC_URI);
-        videoView.setDataSource(source);
-        videoView.
+        Boolean autoPlay = src.getBoolean(PROP_AUTO_PLAY);
+        videoView.setDataSource(source,autoPlay);
     }
 
     @ReactProp(name = PROP_RESIZE_MODE)

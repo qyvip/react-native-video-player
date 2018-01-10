@@ -12,6 +12,7 @@ import { StackNavigator } from 'react-navigation';
 import VodScreen from './view/VodScreen';
 import LiveScreen from './view/LiveScreen';
 import ScanScreen from './view/ScanScreen';
+import VideoList from './view/VideoList'
 class HomeScreen extends Component {
   static navigationOptions = {
     title: 'Welcome KsyMediaplay',
@@ -54,6 +55,12 @@ class HomeScreen extends Component {
             onPress={() =>  navigate('PlayLive', { user: value }) }
             title="直播"
           />
+          </TouchableOpacity>
+          <TouchableOpacity style={{marginTop:10}} >
+          <Button
+            onPress={() =>  navigate('VideoList', { user: value }) }
+            title="录像列表"
+          />
       </TouchableOpacity>
 
       </View>
@@ -70,6 +77,7 @@ export const KSYMediaPlayer_RN = StackNavigator({
               header:null
             }},
   ScanScreen: {screen: ScanScreen},
+  VideoList:{screen: VideoList}
 });
 
 export default class App extends React.Component {

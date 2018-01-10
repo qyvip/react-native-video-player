@@ -7,9 +7,12 @@ import {
     UIManager,
     findNodeHandle,
     StyleSheet,
-    ViewPropTypes
+    ViewPropTypes,
+    NativeModules
 }from 'react-native';
 var RCT_VIDEO_REF = 'KSYVideo';
+const VideoManager = NativeModules.RCTKSYVideoManager;
+
 export default class KSYVideo extends Component {
     constructor(props) {
         super(props);
@@ -104,6 +107,20 @@ export default class KSYVideo extends Component {
         }
     }
 
+    _onRecordVideo = (event) => {
+        if (this.props.onRecordVideo) {
+            this.props.onRecordVideo(event.nativeEvent);
+        }
+    }
+
+    _onStopRecordVideo = (event) => {
+        if (this.props.onStopRecordVideo) {
+            this.props.onStopRecordVideo(event.nativeEvent);
+        }
+    }
+
+        
+
     recordVideo(){
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this.refs[RCT_VIDEO_REF]),
@@ -119,6 +136,53 @@ export default class KSYVideo extends Component {
             null
         );
     }
+
+    // getAllScreenshots(fn){
+    //     // UIManager.dispatchViewManagerCommand(
+    //     //     findNodeHandle(this.refs[RCT_VIDEO_REF]),
+    //     //     UIManager.RCTKSYVideo.Commands.getAllScreenshots,
+    //     //     null
+    //     // );
+    //     VideoManager.getAllScreenshots((data)=>{
+    //         if (fn) {
+    //             fn(data);
+    //         }
+    //     });
+    // }
+
+    // getAllRecords(){
+    //     VideoManager.getAllRecords((data)=>{
+    //         if (fn) {
+    //             fn(data);
+    //         }
+    //     });
+    // }
+
+    // deleteFile(fileName){
+    //     RCTKSYVideo.deleteFile(fileName,(data)=>{
+    //         if (fn) {
+    //             fn(data);
+    //         }
+    //     });
+    // }
+
+    // deleteAllScreenshots(){
+    //     RCTKSYVideo.deleteAllScreenshots((data)=>{
+    //         if (fn) {
+    //             fn(data);
+    //         }
+    //     });
+    // }
+
+    // deleteAllRecords(){
+    //     RCTKSYVideo.deleteAllRecords((data)=>{
+    //         if (fn) {
+    //             fn(data);
+    //         }
+    //     });
+    // }
+
+    
 
     render(){
         const source = this.props.source;
@@ -140,6 +204,8 @@ export default class KSYVideo extends Component {
             onPlaybackStalled: this._onPlaybackStalled,
             onPlaybackResume: this._onPlaybackResume,
             onVideoSaveBitmap: this._onVideoSaveBitmap,
+            onRecordVideo: this._onRecordVideo,
+            onStopRecordVideo: this._onStopRecordVideo
         });
 
         return (  
@@ -198,6 +264,8 @@ KSYVideo.propTypes = {
     onPlaybackStalled: PropTypes.func,
     onPlaybackResume: PropTypes.func,
     onVideoSaveBitmap: PropTypes.func,
+    onRecordVideo: PropTypes.func,
+    onStopRecordVideo: PropTypes.func,
     ...View.propTypes,
 };
 

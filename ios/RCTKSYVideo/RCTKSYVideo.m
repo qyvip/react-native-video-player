@@ -10,13 +10,12 @@
 #import <React/RCTEventDispatcher.h>
 #import "FileManager.h"
 #import "RCTKSYVideo.h"
+#import "KSYAVWriter.h"
 #import <KSYMediaPlayer/KSYMediaPlayer.h>
 
 @implementation RCTKSYVideo {
     RCTEventDispatcher *_eventDispatcher;
     KSYMoviePlayerController *_player;
-    
-//    KSYAVWriter *_AVWriter;
     
     NSMutableArray *registeredNotifications;
     float prepareTimeout;
@@ -56,6 +55,20 @@
                                                  selector:@selector(applicationWillEnterForeground:)
                                                      name:UIApplicationWillEnterForegroundNotification
                                                    object:nil];
+        
+        __weak typeof(self) weakSelf = self;
+        
+        _player.videoDataBlock = ^(CMSampleBufferRef sampleBuffer){
+            //写入视频sampleBuffer
+            if(weakSelf && weakSelf.avWriter && weakSelf.isRecording)
+                [weakSelf.avWriter processVideoSampleBuffer:sampleBuffer];
+        };
+        
+        _player.audioDataBlock = ^(CMSampleBufferRef sampleBuffer){
+            //写入音频sampleBuffer
+            if(weakSelf && weakSelf.avWriter && weakSelf.isRecording)
+                [weakSelf.avWriter processAudioSampleBuffer:sampleBuffer];
+        };
     }
     return self;
 }
@@ -367,50 +380,76 @@
 
 - (void)saveBitmap:(NSString *)data
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        int retState = 0;
-        NSString *newFileName;
-        UIImage *image = [_player thumbnailImageAtCurrentTime];
-        NSString *docmentPath = [[NSString alloc] initWithFormat:@"%@%s", [FileManager getDocumentPath], "/screenshots" ];
-//        if ([FileManager creatDir:docmentPath]){
-        [FileManager creatDir:docmentPath];
-            NSLog(@"创建截图目录成功:%i",retState);
-            newFileName = [FileManager getRandomFileName:@".png"];
-            NSData *data = UIImagePNGRepresentation(image);
-//            if ([FileManager creatFile:newFileName  withData:data]){
-        [FileManager creatFile:newFileName  withData:data];
-                NSLog(@"图片保存成功:%i",retState);
-                retState = 1;
-//            }else{
-//                NSLog(@"图片保存失败:%i",retState);
-//                retState = -2;
-//            }
-//        }else{
-//            NSLog(@"创建截图目录失败:%i",retState);
-//            retState = -1;
-//        }
-        if(self.onVideoSaveBitmap) {
-            NSLog(@"图片保存成功:%@",@{@"path":docmentPath,
-                                 @"uri":newFileName,
-                                 @"state":[NSNumber numberWithInt:retState]});
-            self.onVideoSaveBitmap(@{@"path":docmentPath,
+        dispatch_async(dispatch_get_main_queue(), ^{
+            int retState = 0;
+            NSString *newFileName;
+            UIImage *image = [_player thumbnailImageAtCurrentTime];
+            NSString *docmentPath = [[NSString alloc] initWithFormat:@"%@%s", [FileManager getDocumentPath], "/screenshots" ];
+    //        if ([FileManager creatDir:docmentPath]){
+            [FileManager creatDir:docmentPath];
+                NSLog(@"创建截图目录成功:%i",retState);
+                newFileName = [FileManager getRandomFileName:@"png"];
+                NSData *data = UIImagePNGRepresentation(image);
+    //            if ([FileManager creatFile:newFileName  withData:data]){
+            [FileManager creatFile:[[NSString alloc] initWithFormat:@"%@/%@", docmentPath, newFileName ]  withData:data];
+                    NSLog(@"图片保存成功:%i",retState);
+                    retState = 1;
+    //            }else{
+    //                NSLog(@"图片保存失败:%i",retState);
+    //                retState = -2;
+    //            }
+    //        }else{
+    //            NSLog(@"创建截图目录失败:%i",retState);
+    //            retState = -1;
+    //        }
+            if(self.onVideoSaveBitmap) {
+                NSLog(@"图片保存成功:%@",@{@"path":docmentPath,
                                      @"uri":newFileName,
                                      @"state":[NSNumber numberWithInt:retState]});
-        }
-    });
+                self.onVideoSaveBitmap(@{@"path":docmentPath,
+                                         @"uri":newFileName,
+                                         @"state":[NSNumber numberWithInt:retState]});
+            }
+        });
 
 }
 
 - (void)recordVideo:(NSString *)data
 {
-//    _AVWriter = [[KSYAVWriter alloc]initWithDefaultCfg];
-//    [_AVWriter setUrl:[NSURL URLWithString:[NSString stringWithFormat:@"%@%s", NSHomeDirectory(), "/Documents/PlayerRec.mp4"]]];
+    if (!_isRecording &&_player.isPreparedToPlay) {
+
+        self.isRecording = YES;
+        //初始化KSYAVWriter类
+        self.avWriter = [[KSYAVWriter alloc] initWithDefaultCfg];
+        //设置待写入的文件名
+        
+        NSString *docmentPath = [[NSString alloc] initWithFormat:@"%@%s", [FileManager getDocumentPath], "/records" ];
+        [FileManager creatDir:docmentPath];
+        NSLog(@"创建录像目录");
+        NSString *newFileName = [[NSString alloc] initWithFormat:@"%@/%@", docmentPath, [FileManager getRandomFileName:@"mp4"] ];
+        [self.avWriter setUrl:[NSURL URLWithString:newFileName]];
+        //开始写入
+        [self.avWriter setMeta:[_player getMetadata:MPMovieMetaType_Audio] type:KSYAVWriter_MetaType_Audio];
+        [self.avWriter setMeta:[_player getMetadata:MPMovieMetaType_Video] type:KSYAVWriter_MetaType_Video];
+        [self.avWriter startRecordDeleteRecordedVideo:NO];
+
+    }
 }
 
 - (void)stopRecordVideo:(NSString *)data
 {
     //停止写入
-//    [_AVWriter stopRecord];
+    if (_isRecording) {
+        [_avWriter stopRecord:^(NSDictionary *retDict) {
+            if(self.onVideoSaveBitmap) {
+                NSLog(@"图片保存成功:%@",retDict);
+                self.onVideoSaveBitmap(retDict);
+            }
+        }];
+        self.isRecording = NO;
+    } else {
+        [self recordVideo:data];
+    }
 }
 
 @end

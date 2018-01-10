@@ -52,6 +52,16 @@ export default class VodScreen extends Component {
       alert(data);
       console.log("视频截图返回结果：",data);
     }
+
+    _onRecordVideo(data){
+      alert(data.uri);
+      console.log("视频录像开始，保存路径：",data);
+    }
+
+    _onStopRecordVideo(data){
+      alert(data.timeSpent);
+      console.log("视频录像停止：",data);
+    }
     
     onProgressChanged(newPercent, paused) {
         if (paused){
@@ -106,6 +116,8 @@ export default class VodScreen extends Component {
               onProgress={this._onProgress.bind(this)}
               onReadyForDisplay = {(data)=>{console.log("JS Video render start");}}
               onVideoSaveBitmap = {this._onVideoSaveBitmap.bind(this)}
+              onRecordVideo = {this._onRecordVideo.bind(this)}
+              onStopRecordVideo = {this._onStopRecordVideo.bind(this)}
               style={styles.fullScreen}
             />
         

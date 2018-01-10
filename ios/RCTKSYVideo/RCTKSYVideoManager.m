@@ -57,6 +57,8 @@ RCT_EXPORT_VIEW_PROPERTY(onPlaybackStalled, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onPlaybackResume, RCTBubblingEventBlock);
 
 RCT_EXPORT_VIEW_PROPERTY(onVideoSaveBitmap, RCTBubblingEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onRecordVideo, RCTBubblingEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onStopRecordVideo, RCTBubblingEventBlock);
 
 //供js调用的函数，暂时没有实现
 RCT_EXPORT_METHOD(saveBitmap:data){

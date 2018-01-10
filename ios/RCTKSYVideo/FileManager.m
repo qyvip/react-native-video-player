@@ -119,12 +119,12 @@
     NSDate *now = [[NSDate alloc] init];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    dateFormatter.dateFormat = @"yyyyMMdd-HHmmss";
     
     srandom((unsigned int)time(NULL));
     long seq = random();
     // Date 转 String
-    return [[NSString alloc] initWithFormat:@"%@ %li.%@", [dateFormatter stringFromDate:now], seq, ext];
+    return [[NSString alloc] initWithFormat:@"%@-%li.%@", [dateFormatter stringFromDate:now], seq, ext];
 }
 
 @end

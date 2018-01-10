@@ -1,3 +1,22 @@
+## 增加内容说明
+
+### 2018-01-10 新增加视频截图和录像功能
+* Android 取图片目录
+
+Environment.getExternalStorageDirectory() + "DCIM/video"
+
+* Android 取视频目录
+Environment.getExternalStorageDirectory() + "DCIM/image"
+
+* IOS 取图片目录
+DocumentPath + "/screenshots"
+
+* IOS 取视频目录
+DocumentPath + "/records"
+
+* 取图方法 *
+> 使用react-native-fs库进行取图操作，注意，需要对取出的列表进行倒序显示
+
 ## react-native-video-player
 <pre>Source Type:<b> Open Source</b></pre>
 

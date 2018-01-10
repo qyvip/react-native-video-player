@@ -391,7 +391,8 @@
                 newFileName = [FileManager getRandomFileName:@"png"];
                 NSData *data = UIImagePNGRepresentation(image);
     //            if ([FileManager creatFile:newFileName  withData:data]){
-            [FileManager creatFile:[[NSString alloc] initWithFormat:@"%@/%@", docmentPath, newFileName ]  withData:data];
+            NSString *newPath = [[NSString alloc] initWithFormat:@"%@/%@", docmentPath, newFileName ];
+            [FileManager creatFile:newPath  withData:data];
                     NSLog(@"图片保存成功:%i",retState);
                     retState = 1;
     //            }else{
@@ -403,12 +404,19 @@
     //            retState = -1;
     //        }
             if(self.onVideoSaveBitmap) {
-                NSLog(@"图片保存成功:%@",@{@"path":docmentPath,
-                                     @"uri":newFileName,
-                                     @"state":[NSNumber numberWithInt:retState]});
-                self.onVideoSaveBitmap(@{@"path":docmentPath,
-                                         @"uri":newFileName,
-                                         @"state":[NSNumber numberWithInt:retState]});
+                NSMutableDictionary *gifResponse = [[NSMutableDictionary alloc] init];
+                NSURL *fileURL = [NSURL fileURLWithPath:newPath];
+                [gifResponse setObject:docmentPath forKey:@"path"];
+                [gifResponse setObject:newFileName forKey:@"fileName"];
+                [gifResponse setObject:[fileURL absoluteString] forKey:@"uri"];
+                NSNumber *fileSizeValue = nil;
+                NSError *fileSizeError = nil;
+                [fileURL getResourceValue:&fileSizeValue forKey:NSURLFileSizeKey error:&fileSizeError];
+                if (fileSizeValue){
+                    [gifResponse setObject:fileSizeValue forKey:@"fileSize"];
+                }
+                NSLog(@"图片保存成功:%@",gifResponse);
+                self.onVideoSaveBitmap(gifResponse);
             }
         });
 
@@ -426,12 +434,22 @@
         NSString *docmentPath = [[NSString alloc] initWithFormat:@"%@%s", [FileManager getDocumentPath], "/records" ];
         [FileManager creatDir:docmentPath];
         NSLog(@"创建录像目录");
-        NSString *newFileName = [[NSString alloc] initWithFormat:@"%@/%@", docmentPath, [FileManager getRandomFileName:@"mp4"] ];
-        [self.avWriter setUrl:[NSURL URLWithString:newFileName]];
+        NSString *newFileName = [FileManager getRandomFileName:@"mp4"];
+        NSString *newPath = [[NSString alloc] initWithFormat:@"%@/%@", docmentPath, newFileName ];
+        [self.avWriter setUrl:[NSURL URLWithString:newPath]];
         //开始写入
         [self.avWriter setMeta:[_player getMetadata:MPMovieMetaType_Audio] type:KSYAVWriter_MetaType_Audio];
         [self.avWriter setMeta:[_player getMetadata:MPMovieMetaType_Video] type:KSYAVWriter_MetaType_Video];
         [self.avWriter startRecordDeleteRecordedVideo:NO];
+        
+        NSMutableDictionary *dataResponse = [[NSMutableDictionary alloc] init];
+        NSURL *fileURL = [NSURL fileURLWithPath:newPath];
+        [dataResponse setObject:docmentPath forKey:@"path"];
+        [dataResponse setObject:newFileName forKey:@"fileName"];
+        [dataResponse setObject:[fileURL absoluteString] forKey:@"uri"];
+
+        NSLog(@"开始录像:%@",dataResponse);
+        self.onVideoSaveBitmap(dataResponse);
 
     }
 }
@@ -440,10 +458,10 @@
 {
     //停止写入
     if (_isRecording) {
-        [_avWriter stopRecord:^(NSDictionary *retDict) {
+        [_avWriter stopRecord:^(NSMutableDictionary *dataResponse) {
             if(self.onVideoSaveBitmap) {
-                NSLog(@"图片保存成功:%@",retDict);
-                self.onVideoSaveBitmap(retDict);
+                NSLog(@"录像保存成功:%@",dataResponse);
+                self.onVideoSaveBitmap(dataResponse);
             }
         }];
         self.isRecording = NO;

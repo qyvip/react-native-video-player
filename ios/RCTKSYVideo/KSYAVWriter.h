@@ -68,10 +68,10 @@ typedef NS_ENUM(NSInteger, KSYAVWriterMetaType) {
 -(void)processAudioSampleBuffer:(CMSampleBufferRef)sampleBuffer;
 
 //停止写入
--(void)stopRecord:(void(^)(NSDictionary *retDict))resultBlock;
+-(void)stopRecord:(void(^)(NSMutableDictionary *dataResponse))resultBlock;
 
 // 暂停写入
-- (void)stopRecordPause:(BOOL)pause resultBlock:(void(^)(NSDictionary *retDict))resultBlock;
+- (void)stopRecordPause:(BOOL)pause resultBlock:(void(^)(NSMutableDictionary *dataResponse))resultBlock;
 
 // 将录制的视频存入相册
 - (void)saveVideoToPhotosAlbumWithResultBlock:(void(^)(NSError *error))resultBlock;

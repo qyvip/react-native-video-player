@@ -14,6 +14,7 @@ import {
   processColor,
   TouchableOpacity,
   Image,
+  Platform,
   StatusBar
 } from 'react-native';
 import KSYVideo from './KSYVideo';
@@ -29,6 +30,7 @@ export default class VodScreen extends Component {
         windowHeight: 0,
         duration: 0.0,
         currentTime: 0.0,
+        videoSaveBitmap:""
       };
     }
 
@@ -49,7 +51,15 @@ export default class VodScreen extends Component {
     }
 
     _onVideoSaveBitmap(data){
-      alert(data);
+      // alert(data.uri);
+      // alert(data.path);
+      var uriPath;
+				if (Platform.OS === 'android') {
+					uriPath = response.uri;
+				} else {
+					uriPath = data.uri.replace('file://', '');
+				}
+      this.setState({videoSaveBitmap:uriPath});
       console.log("视频截图返回结果：",data);
     }
 
@@ -152,7 +162,9 @@ export default class VodScreen extends Component {
                                     onNewPercent={this.onProgressChanged.bind(this)}/>
               </View>
             </View>):(null)}
-
+            <Image source={{uri : this.state.videoSaveBitmap}} style={{width:100,height:100}}/>
+            <Text>{this.state.videoSaveBitmap.uri}</Text>
+            <Text>{this.state.videoSaveBitmap.path}</Text>
         </View>
     );
   }
@@ -169,12 +181,12 @@ const styles = StyleSheet.create({
 
   fullScreen: {
     // position: 'absolute',
-    top: 10,
-    left: 30,
+    top: 0,
+    left: 0,
     bottom: 0,
     right: 0,
-width:350,
-height:200,
+    width:10,
+    height:10,
     backgroundColor: 'blue',
   },
 

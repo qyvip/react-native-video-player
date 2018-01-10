@@ -279,12 +279,12 @@
 }
 
 //停止写入
--(void)stopRecord:(void(^)(NSDictionary *retDict))resultBlock
+-(void)stopRecord:(void(^)(NSMutableDictionary *dataResponse))resultBlock
 {
     [self stopRecordPause:NO resultBlock:resultBlock];
 }
 
-- (void)stopRecordPause:(BOOL)pause resultBlock:(void(^)(NSDictionary *retDict))resultBlock {
+- (void)stopRecordPause:(BOOL)pause resultBlock:(void(^)(NSMutableDictionary *dataResponse))resultBlock {
     
     if (pause) {
         status = KSYAVWriter_Status_Pause;
@@ -305,10 +305,12 @@
         CFAbsoluteTime stopTime=0;
         NSUInteger length=0;
         int writeState = 0;
+        NSURL *outputUrl = [NSURL fileURLWithPath:[filePath absoluteString]];
         if (AVWriter.status == AVAssetWriterStatusCompleted) {
             [AVWriter cancelWriting];
             stopTime = CFAbsoluteTimeGetCurrent();
-            NSData *data = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:[filePath absoluteString]]];
+            
+            NSData *data = [NSData dataWithContentsOfURL:outputUrl];
             length = data.length;
             writeState = 1;
             NSLog(@"write complete, time spent : %.4f,  file size : %ldKB", stopTime - startTime, length/1024);
@@ -317,12 +319,23 @@
         }
         status = KSYAVWriter_Status_Init;
         if (resultBlock){
-            resultBlock(@{@"startTime":[NSNumber numberWithDouble:startTime],
-                          @"stopTime":[NSNumber numberWithDouble:stopTime],
-                          @"timeSpent":[NSNumber numberWithDouble:stopTime - startTime],
-                          @"length":[NSNumber numberWithDouble:length/1024],
-                          @"state":[NSNumber numberWithInt:writeState],
-                        });
+            NSMutableDictionary *dataResponse = [[NSMutableDictionary alloc] init];
+            [dataResponse setObject:[NSNumber numberWithDouble:startTime] forKey:@"startTime"];
+            [dataResponse setObject:[NSNumber numberWithDouble:stopTime] forKey:@"stopTime"];
+            [dataResponse setObject:[NSNumber numberWithDouble:stopTime - startTime] forKey:@"timeSpent"];
+            [dataResponse setObject:[NSNumber numberWithDouble:length/1024] forKey:@"length"];
+            [dataResponse setObject:[NSNumber numberWithInt:writeState] forKey:@"state"];
+
+            [dataResponse setObject:[filePath absoluteString] forKey:@"path"];
+            [dataResponse setObject:[outputUrl absoluteString] forKey:@"uri"];
+            NSNumber *fileSizeValue = nil;
+            NSError *fileSizeError = nil;
+            [outputUrl getResourceValue:&fileSizeValue forKey:NSURLFileSizeKey error:&fileSizeError];
+            if (fileSizeValue){
+                [dataResponse setObject:fileSizeValue forKey:@"fileSize"];
+            }
+            NSLog(@"录像保存成功:%@",dataResponse);
+            resultBlock(dataResponse);
         }
     }];
     

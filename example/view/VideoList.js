@@ -23,9 +23,12 @@ var RNFS = require('react-native-fs');
 import moment from 'moment';
 
 export default class VideoList extends Component {
+
+    
     constructor(props) {
       super(props);
-      videos=[]
+      videos=[];
+      RootPath = "";
       this.state = {
         screenshots: [],
         records:[]
@@ -34,13 +37,13 @@ export default class VideoList extends Component {
 
     componentWillMount(){
 
-      let filePath;
+      
       if (Platform.OS === 'android') {
-        filePath = RNFS.ExternalStorageDirectoryPath;
+        RootPath = RNFS.ExternalStorageDirectoryPath;
       }else{
-        filePath = RNFS.DocumentDirectoryPath;
+        RootPath = RNFS.DocumentDirectoryPath;
       }
-      RNFS.readDir(filePath+"/screenshots") // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
+      RNFS.readDir(RootPath+"/screenshots") // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
         .then((result) => {
           console.log('GOT RESULT', result);
           result.sort(function(a, b){
@@ -54,7 +57,7 @@ export default class VideoList extends Component {
           console.log(err.message, err.code);
         });
 
-        RNFS.readDir(filePath+"/records") // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
+        RNFS.readDir(RootPath+"/records") // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
         .then((result) => {
           console.log('GOT RESULT', result);
           result.sort(function(a, b){
@@ -98,20 +101,12 @@ export default class VideoList extends Component {
 
     _recordsRenderItem = ({item,index}) => {
       let filePath = "file://"+item.path;
+      let recordScreenshot = "file://"+RootPath+"/recordScreenshots/"+item.name+".png";
       return (
         <TouchableOpacity onPress={()=>{this._onPressScreenshotItemButton(item)}}>
           <View style={styles.rowView}>
             <View style={styles.rowLeftView}>
-            <KSYVideo
-              source={{uri:filePath}}
-              videoFrame={{x:0,y:0,width:100,height:60}}
-              // onLoad={()=>{this.videos[index]}}
-              onReadyForDisplay = {(data)=>{console.log("JS Video render start",data);}}
-              paused={false}
-              muted={true}
-              playInBackground={false}
-              style={styles.videoView}
-            />
+            <Image source={{uri : recordScreenshot}} style={{width:100,height:60}}/>
             </View>
             <View style={styles.rowRightView}>
               <Text style={styles.rowFileName}>{moment(item.mtime).format("YYYY-MM-DD HH:mm:ss")}</Text>

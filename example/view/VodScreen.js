@@ -17,8 +17,8 @@ import {
   Platform,
   StatusBar
 } from 'react-native';
-import KSYVideo from './KSYVideo';
-import ProgressController from './ProgressController'
+import KSYVideo from 'react-native-ksyvideo';
+import ProgressController from './ProgressController';
 
 export default class VodScreen extends Component {
     constructor(props) {

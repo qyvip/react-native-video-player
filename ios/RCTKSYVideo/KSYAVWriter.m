@@ -102,13 +102,14 @@
         NSDictionary *videoCompressionProps = [NSDictionary dictionaryWithObjectsAndKeys:
                                                [NSNumber numberWithDouble:_videoBitrate * 1000], AVVideoAverageBitRateKey,
                                                nil];
-        
+        NSLog(@"videoCompressionProps:%@",videoCompressionProps);
         NSDictionary *videoSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-                                       AVVideoCodecH264, AVVideoCodecKey,
+                                       AVVideoCodecTypeH264, AVVideoCodecKey,
                                        [videoMeta objectForKey:kKSYPLYVideoWidth], AVVideoWidthKey,
                                        [videoMeta objectForKey:kKSYPLYVideoHeight], AVVideoHeightKey,
                                        videoCompressionProps, AVVideoCompressionPropertiesKey,
                                        nil];
+        NSLog(@"videoSettings:%@",videoSettings);
         //视频输入源
         videoWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:videoSettings];
         videoWriterInput.expectsMediaDataInRealTime = YES;
@@ -139,15 +140,20 @@
             audio_channels = 2;
             acl.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
         }
-        
+        NSLog(@"audioMeta:%@",audioMeta);
+        //在取EasyNVR流时，声音采样为8000，在写入文件时，编码失败，提供不支持的参数，现默认改为441000，大于此编码的不处理
+        float actual_audioSampleRate = [[audioMeta objectForKey:kKSYPLYAudioSampleRate] floatValue];
+        if (actual_audioSampleRate < 44100){
+            actual_audioSampleRate = 44100.0;
+        }
         NSDictionary *audioOutputSettings = [ NSDictionary dictionaryWithObjectsAndKeys:
                                              [ NSNumber numberWithInt: kAudioFormatMPEG4AAC ], AVFormatIDKey,
                                              [ NSNumber numberWithInt:_audioBitrate * 1000], AVEncoderBitRateKey,
-                                             [audioMeta objectForKey:kKSYPLYAudioSampleRate], AVSampleRateKey,
+                                             [ NSNumber numberWithFloat: actual_audioSampleRate], AVSampleRateKey,
                                              [ NSNumber numberWithInt: audio_channels], AVNumberOfChannelsKey,
                                              [ NSData dataWithBytes: &acl length: sizeof( acl ) ], AVChannelLayoutKey,
                                              nil ];
-        
+        NSLog(@"audioOutputSettings:%@",audioOutputSettings);
         //初始化写入器，并制定媒体格式
         audioWriterInput = [[AVAssetWriterInput alloc]initWithMediaType:AVMediaTypeAudio outputSettings:audioOutputSettings];
         if ([AVWriter canAddInput:audioWriterInput])
@@ -240,9 +246,15 @@
 //接收音频sampleBuffer
 -(void) processAudioSampleBuffer:(CMSampleBufferRef)sampleBuffer
 {
+//    NSLog(@"sampleBuffer :%@", sampleBuffer);
+//    NSLog(@"audioQueue:%@", audioQueue);
+//    NSLog(@"audioWriterInput :%@", audioWriterInput);
+//    NSLog(@"status :%d", status);
     if(!sampleBuffer || !audioQueue || !audioWriterInput || status != KSYAVWriter_Status_OK)
         return ;
     
+//    NSLog(@"videoWriterInput :%@", videoWriterInput);
+//    NSLog(@"bSetStartPts :%@", bSetStartPts);
     if(videoWriterInput && !bSetStartPts)
         return ;
     
@@ -272,6 +284,7 @@
         }
         if (KSYAVWriter_Status_OK == status && [audioWriterInput isReadyForMoreMediaData])
             //将音频sampleBuffer添加入音频输入源
+//            NSLog(@"sampleBuffer :%@", sampleBuffer);
             [audioWriterInput appendSampleBuffer:sampleBuffer];
 
         CFRelease(sampleBuffer);
@@ -306,6 +319,7 @@
         NSUInteger length=0;
         int writeState = 0;
         NSURL *outputUrl = [NSURL fileURLWithPath:[filePath absoluteString]];
+        NSLog(@"AVWriter.status: %ld", AVWriter.status);
         if (AVWriter.status == AVAssetWriterStatusCompleted) {
             [AVWriter cancelWriting];
             stopTime = CFAbsoluteTimeGetCurrent();
@@ -315,7 +329,7 @@
             writeState = 1;
             NSLog(@"write complete, time spent : %.4f,  file size : %ldKB", stopTime - startTime, length/1024);
         }else{
-            NSLog(@"write failed!!! error code : %ld  errstr:%@", AVWriter.error.code, AVWriter.error.domain);
+            NSLog(@"write failed!!! error code : %ld  errstr:%@ error:%@", AVWriter.error.code, AVWriter.error.domain, AVWriter.error);
         }
         status = KSYAVWriter_Status_Init;
         if (resultBlock){

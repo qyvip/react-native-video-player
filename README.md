@@ -1,5 +1,17 @@
 ## 增加内容说明
 
+### 2018-01-11 新增加视频录像首页截图功能功能
+
+- 例子中，VideoList修改原filePath为全局RootPath
+
+> let recordScreenshot = "file://"+RootPath+"/recordScreenshots/"+item.name+".png";
+
+recordScreenshot文件名格式为：xxxxxx.mp4.png
+
+- ios中，目前取网关中rtmp流录像保存时出错，此音频采样为8000，目前调整为小于44100的默认为44100
+
+- 取消example中的KSYVideo.js文件，防止运行时，把组件重复注册
+
 ### 2018-01-10 新增加视频截图和录像功能
 * Android 取图片目录
 

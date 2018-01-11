@@ -425,6 +425,28 @@
 
 }
 
+- (NSString *)recordVideoSaveBitmap:(NSString *)fileName
+{
+//    dispatch_async(dispatch_get_main_queue(), ^{
+        int retState = 0;
+        NSString *newFileName;
+        UIImage *image = [_player thumbnailImageAtCurrentTime];
+        NSString *docmentPath = [[NSString alloc] initWithFormat:@"%@%s", [FileManager getDocumentPath], "/recordScreenshots" ];
+        //        if ([FileManager creatDir:docmentPath]){
+        [FileManager creatDir:docmentPath];
+        NSLog(@"创建截图目录成功:%i",retState);
+        newFileName = [FileManager getRandomFileName:@"png"];
+        NSData *data = UIImagePNGRepresentation(image);
+        //            if ([FileManager creatFile:newFileName  withData:data]){
+        NSString *newPath = [[NSString alloc] initWithFormat:@"%@/%@.%s", docmentPath, fileName, "png" ];
+        [FileManager creatFile:newPath  withData:data];
+        NSLog(@"图片保存成功:%i",retState);
+        retState = 1;
+        return newPath;
+//    });
+    
+}
+
 - (void)recordVideo:(NSString *)data
 {
     if (!_isRecording &&_player.isPreparedToPlay) {
@@ -438,18 +460,29 @@
         [FileManager creatDir:docmentPath];
         NSLog(@"创建录像目录");
         NSString *newFileName = [FileManager getRandomFileName:@"mp4"];
+        
+        NSString *recordScreenshot=[self recordVideoSaveBitmap:newFileName];
+        
         NSString *newPath = [[NSString alloc] initWithFormat:@"%@/%@", docmentPath, newFileName ];
         [self.avWriter setUrl:[NSURL URLWithString:newPath]];
         //开始写入
+        
+        NSLog(@"MPMovieMetaType_Audio:%@",[_player getMetadata:MPMovieMetaType_Audio]);
+        NSLog(@"MPMovieMetaType_Video:%@",[_player getMetadata:MPMovieMetaType_Video]);
+        
         [self.avWriter setMeta:[_player getMetadata:MPMovieMetaType_Audio] type:KSYAVWriter_MetaType_Audio];
         [self.avWriter setMeta:[_player getMetadata:MPMovieMetaType_Video] type:KSYAVWriter_MetaType_Video];
         [self.avWriter startRecordDeleteRecordedVideo:NO];
         
         NSMutableDictionary *dataResponse = [[NSMutableDictionary alloc] init];
         NSURL *fileURL = [NSURL fileURLWithPath:newPath];
+        NSURL *recordScreenshotURL = [NSURL fileURLWithPath:recordScreenshot];
         [dataResponse setObject:docmentPath forKey:@"path"];
         [dataResponse setObject:newFileName forKey:@"fileName"];
         [dataResponse setObject:[fileURL absoluteString] forKey:@"uri"];
+        [dataResponse setObject:recordScreenshot forKey:@"recordScreenshotPath"];
+        [dataResponse setObject:recordScreenshotURL forKey:@"recordScreenshotURL"];
+        
 
         NSLog(@"开始录像:%@",dataResponse);
         self.onRecordVideo(dataResponse);

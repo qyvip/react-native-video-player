@@ -100,7 +100,7 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
     private Handler mHandler;
     private int mVideoWidth;
     private int mVideoHeight;
-    private File videoFile, imageFile;
+    private File videoFile, imageFile, recordScreenshotsFile;
     private boolean bRecord = false;
     private int mResizeMode = KSYMediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT;
     private float mProgressUpdateInterval = 250.0f;
@@ -326,11 +326,16 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
 
         videoFile = new File(Environment.getExternalStorageDirectory(), "records");
         imageFile = new File(Environment.getExternalStorageDirectory(), "screenshots");
+        recordScreenshotsFile = new File(Environment.getExternalStorageDirectory(), "recordScreenshots");
         if (!videoFile.exists()) {
             videoFile.mkdir();
         }
         if (!imageFile.exists()) {
             imageFile.mkdir();
+        }
+
+        if (!recordScreenshotsFile.exists()) {
+            recordScreenshotsFile.mkdir();
         }
 
         mHandler = new Handler() {
@@ -396,6 +401,40 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
 
     }
 
+    public WritableMap reacordVideoSaveBitmap(String fileName) {
+
+        String imageName = fileName + ".png";
+        File file = new File(recordScreenshotsFile, imageName);
+        FileOutputStream outputStream;
+        Bitmap bitmap = ksyTextureView.getScreenShot();
+        Context context = getContext();
+        while (!(context instanceof Activity) && context instanceof ContextWrapper) {
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        WritableMap event = Arguments.createMap();
+        try {
+            outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+            //图片保存到相册
+//            MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), imageName, null);
+            Uri uri = Uri.fromFile(file);
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+
+            event.putString("recordScreenshotURL", uri.getPath());
+            event.putString("recordScreenshotPath", file.getAbsolutePath());
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Toast.makeText(context, "截图保存至相册!", Toast.LENGTH_SHORT).show();
+        return event;
+    }
+
     public void reacordVideo() {
         if (mMediaRecorder != null)
             return;
@@ -408,6 +447,9 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
         Random random = new Random();
         int seq = random.nextInt(200);
         String videoName = str +"-"+ seq + ".mp4";
+
+        WritableMap event = reacordVideoSaveBitmap(videoName);
+
         String outputPath = videoFile.getAbsolutePath() + "/" + videoName;
         final String videoPath = outputPath;
         recorderConfig.setVideoBitrate(800 * 1000); //码率设置为 800kbps
@@ -421,11 +463,12 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
             e.printStackTrace();
         }
         mMediaRecorder.start(); // 开始录制
-        WritableMap event = Arguments.createMap();
+//        WritableMap event = Arguments.createMap();
         event.putString("uri", outputPath);
         event.putString("path", videoFile.getAbsolutePath());
         event.putString("fileName", videoName);
         event.putDouble("startTime", startTime);
+        event.putInt("state", 1);
         event.putInt("state", 1);
         event.putString("msg", "StartRecord");
         mEventEmitter.receiveEvent(getId(), Events.EVENT_START_RECORD_VIDEO.toString(), event);
@@ -456,6 +499,7 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
                     event.putDouble("endTime", endTime);
                     event.putDouble("timeSpent", endTime - startTime);
                     event.putDouble("fileSize", file.length());
+                    event.putString("fileEncodedPath", uri.getEncodedPath());
 
                     event.putInt("state", 1);
                     event.putString("msg", "StopRecord");

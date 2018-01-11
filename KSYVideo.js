@@ -186,14 +186,22 @@ export default class KSYVideo extends Component {
 
     render(){
         const source = this.props.source;
-        let uri = source.uri;
-        let autoPlay = source.autoPlay;
+        let uri = '';
+        let autoPlay = true;
+        if (source && source.uri){
+            uri = source.uri;
+            autoPlay = source.autoPlay ;
+            if(typeof(autoPlay)=="undefined"){ 
+                autoPlay = true;    
+            } 
+        }
+        
         const nativeProps = Object.assign({}, this.props);
         Object.assign(nativeProps, {
             
             src: {
                 uri,
-                autoPlay:true
+                autoPlay
             },
             onVideoTouch:this._onTouch,
             onVideoLoadStart: this._onLoadStart,
@@ -235,7 +243,8 @@ KSYVideo.propTypes = {
     /* Wrapper component */
     source: PropTypes.oneOfType([
         PropTypes.shape({
-          uri: PropTypes.string
+          uri: PropTypes.string,
+          autoPlay: PropTypes.bool
         }),
     ]),
     timeout:PropTypes.shape({
@@ -274,7 +283,6 @@ KSYVideo.propTypes = {
 const RCTKSYVideo = requireNativeComponent('RCTKSYVideo',KSYVideo,{
    nativeOnly: {
     src: true,
-    seek: true,
-    auto: true
+    seek: true
   },
 });

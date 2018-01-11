@@ -16,7 +16,7 @@ import {
   Image,
   StatusBar
 } from 'react-native';
-import KSYVideo from './KSYVideo';
+import KSYVideo from 'react-native-ksyvideo';
 import AudioController from './AudioController'
 
 export default class LiveScreen extends Component {

@@ -452,7 +452,7 @@
         [dataResponse setObject:[fileURL absoluteString] forKey:@"uri"];
 
         NSLog(@"开始录像:%@",dataResponse);
-        self.onVideoSaveBitmap(dataResponse);
+        self.onRecordVideo(dataResponse);
 
     }
 }
@@ -464,7 +464,7 @@
         [_avWriter stopRecord:^(NSMutableDictionary *dataResponse) {
             if(self.onVideoSaveBitmap) {
                 NSLog(@"录像保存成功:%@",dataResponse);
-                self.onVideoSaveBitmap(dataResponse);
+                self.onStopRecordVideo(dataResponse);
             }
         }];
         self.isRecording = NO;

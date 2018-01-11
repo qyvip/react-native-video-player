@@ -2,6 +2,11 @@
 
 ### 2018-01-11 新增加视频录像首页截图功能功能
 
+- 录像返回时，只在开始返回值中包括录像缩略图参数
+
+recordScreenshotPath
+recordScreenshotURL
+
 - 例子中，VideoList修改原filePath为全局RootPath
 
 > let recordScreenshot = "file://"+RootPath+"/recordScreenshots/"+item.name+".png";

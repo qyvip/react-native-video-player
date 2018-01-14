@@ -230,7 +230,6 @@ KSYVideo.propTypes = {
     /* Native only */
     style: ViewPropTypes.style,
     src: PropTypes.object,
-    videoFrame: PropTypes.object,
     seek: PropTypes.number,
     onVideoTouch: PropTypes.func,
     onVideoLoadStart: PropTypes.func,

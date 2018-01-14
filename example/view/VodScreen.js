@@ -114,7 +114,6 @@ export default class VodScreen extends Component {
           <KSYVideo
               ref={(video)=>{this.video = video}}
               source={{uri:params.user}}
-              videoFrame={{x:10,y:200,width:300,height:200}}
               timeout={{prepareTimeout:60, readTimeout:60}}
               paused={this.state.paused}
               playInBackground={true}
@@ -167,8 +166,6 @@ export default class VodScreen extends Component {
               </View>
             </View>):(null)}
             <Image source={{uri : this.state.videoSaveBitmap}} style={{width:100,height:100}}/>
-            <Text>{this.state.videoSaveBitmap.uri}</Text>
-            <Text>{this.state.videoSaveBitmap.path}</Text>
         </View>
     );
   }
@@ -184,13 +181,13 @@ const styles = StyleSheet.create({
   },
 
   fullScreen: {
-    // position: 'absolute',
-    top: 200,
+    position: 'absolute',
+    top: 0,
     left: 0,
     bottom: 0,
     right: 0,
-    width:300,
-    height:100,
+    width:width,
+    height:height,
     backgroundColor: 'blue',
   },
 

@@ -36,6 +36,8 @@
         [self setupObservers:_player];
         [_player addObserver:self forKeyPath:@"currentPlaybackTime" options:nil context:nil];
         
+        _player.view.backgroundColor = [UIColor blackColor];
+        
         [self addSubview:_player.view];
         
         _playInBackground = false;
@@ -75,6 +77,12 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+-(void)layoutSubviews{
+    if(_player){
+        _player.view.frame = self.bounds;
+    }
 }
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
@@ -121,19 +129,6 @@
     if(self.onVideoLoadStart) {
         self.onVideoLoadStart(@{});
     }
-}
-
-- (void)setVideoFrame:(NSDictionary *)videoFrame {
-    if (videoFrame){
-        NSNumber* playerX = [videoFrame objectForKey:@"x"];
-        NSNumber* playerY = [videoFrame objectForKey:@"y"];
-        NSNumber* playerWidth = [videoFrame objectForKey:@"width"];
-        NSNumber* playerHeight = [videoFrame objectForKey:@"height"];
-        //    if (playerWidth > 0 && playerHeight > 0){
-        _player.view.frame = CGRectMake(playerX.intValue, playerY.intValue, playerWidth.intValue, playerHeight.intValue);
-        //    }
-    }
-    
 }
 
 - (void)setSeek:(float)seekTime {

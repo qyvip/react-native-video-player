@@ -1,4 +1,20 @@
 ## 增加内容说明
+### 2018-01-14 
+
+- 修改安卓端文件保存目录为：
+```
+Environment.getExternalStorageDirectory() + "yunkan/screenshots"
+Environment.getExternalStorageDirectory() + "yunkan/records"
+Environment.getExternalStorageDirectory() + "yunkan/recordScreenshots"
+```
+- 修改安卓端返回uri的值
+> file:/storage/emulated/0/yunkan/screenshots/20180115-012220-109.png
+
+- 关于安卓端目录创建权限问题
+
+> 保持项目的targetSdkVersion 22，当targetSdkVersion>=23时，安卓需要以显示方式单独申请操作权限，此问题以后再处理
+
+- 修改安卓端isSupportPlanarYUV文件，判断是否为COLOR_FormatYUV420Flexible，解决绿屏问题
 
 ### 2018-01-11 新增加视频录像首页截图功能功能
 

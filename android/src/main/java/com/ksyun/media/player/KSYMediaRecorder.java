@@ -179,6 +179,16 @@ public class KSYMediaRecorder {
         }
 
         KSYMediaMeta mediaMeta = player.getMediaInfo().mMeta;
+
+        Log.d(TAG,"KSYMediaPlayer-init");
+        Log.d(TAG,"mediaMeta:"+mediaMeta.toString());
+        Log.d(TAG,"mediaMeta-mVCodec:"+mediaMeta.mVCodec);
+        Log.d(TAG,"mediaMeta-mFormat:"+mediaMeta.mFormat);
+        Log.d(TAG,"mediaMeta-mBitrate:"+mediaMeta.mBitrate);
+        Log.d(TAG,"mediaMeta-mACodec:"+mediaMeta.mACodec);
+        Log.d(TAG,"mediaMeta-mFpsNum:"+mediaMeta.mVideoStream.mFpsNum);
+        Log.d(TAG,"mediaMeta-mFpsDen:"+mediaMeta.mVideoStream.mFpsDen);
+
         if (mediaMeta != null) {
             if (mediaMeta.mVideoStream != null
                     && mediaMeta.mVideoStream.mFpsNum > 0
@@ -188,7 +198,7 @@ public class KSYMediaRecorder {
                 if (fps > 0)
                     mTargetFPS = fps;
             }
-
+            Log.d(TAG,"mediaMeta-mTargetFPS:"+mTargetFPS);
             if (mediaMeta.mAudioStream != null) {
                 if (mediaMeta.mAudioStream.mSampleRate > 0)
                     mOrigSampleRate = mediaMeta.mAudioStream.mSampleRate;
@@ -297,7 +307,8 @@ public class KSYMediaRecorder {
         }
 
         MediaFormat videoFormat = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, mVideoWidth, mVideoHeight);
-        videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, 21);
+//        videoFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 0);
+        videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, getVideoEncodeColorFormat());
         videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, mRecorderConfig.getVideoBitrate());
         videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, mTargetFPS);
         videoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, mRecorderConfig.getKeyFrameIntervalSecond());
@@ -465,6 +476,7 @@ public class KSYMediaRecorder {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void dequeueInputBufferForNonPlanarYUV(QueueItem item, int index) {
+        Log.d(TAG,"dequeueInputBufferForNonPlanarYUV");
         Image image = mVideoEncoder.getInputImage(index);
         ByteBuffer rawBuffer = item.mByteBuffer;
         int stride = (mVideoWidth + 15) / 16 * 16;
@@ -739,7 +751,7 @@ public class KSYMediaRecorder {
     }
 
     private boolean isSupportPlanarYUV() {
-        return mVideoEncoderColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
+        return mVideoEncoderColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible;
     }
 
     private class QueueItem {

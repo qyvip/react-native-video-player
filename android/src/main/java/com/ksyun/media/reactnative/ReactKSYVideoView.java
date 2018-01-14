@@ -1,5 +1,6 @@
 package com.ksyun.media.reactnative;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -322,20 +323,30 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
         ksyTextureView.setTimeout(5, 30);
 
         /* 使用自动模式 */
-        ksyTextureView.setDecodeMode(KSYMediaPlayer.KSYDecodeMode.KSY_DECODE_MODE_AUTO);
+//        ksyTextureView.setDecodeMode(KSYMediaPlayer.KSYDecodeMode.KSY_DECODE_MODE_AUTO);
 
-        videoFile = new File(Environment.getExternalStorageDirectory(), "records");
-        imageFile = new File(Environment.getExternalStorageDirectory(), "screenshots");
-        recordScreenshotsFile = new File(Environment.getExternalStorageDirectory(), "recordScreenshots");
+        videoFile = new File(Environment.getExternalStorageDirectory(),"yunkan/records");
+        imageFile = new File(Environment.getExternalStorageDirectory(),"yunkan/screenshots");
+        recordScreenshotsFile = new File(Environment.getExternalStorageDirectory(),"yunkan/recordScreenshots");
+
         if (!videoFile.exists()) {
-            videoFile.mkdir();
+            Log.d(TAG,"目录不存在，创建目录："+videoFile.getAbsolutePath());
+            videoFile.mkdirs();
+        }else{
+            Log.d(TAG,"目录已存在："+videoFile.getAbsolutePath());
         }
         if (!imageFile.exists()) {
-            imageFile.mkdir();
+            Log.d(TAG,"目录不存在，创建目录："+imageFile.getAbsolutePath());
+            imageFile.mkdirs();
+        }else{
+            Log.d(TAG,"目录已存在："+imageFile.getAbsolutePath());
         }
 
         if (!recordScreenshotsFile.exists()) {
-            recordScreenshotsFile.mkdir();
+            Log.d(TAG,"目录不存在，创建目录："+recordScreenshotsFile.getAbsolutePath());
+            recordScreenshotsFile.mkdirs();
+        }else{
+            Log.d(TAG,"目录已存在："+recordScreenshotsFile.getAbsolutePath());
         }
 
         mHandler = new Handler() {
@@ -378,6 +389,9 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
             context = ((ContextWrapper) context).getBaseContext();
         }
         try {
+            Log.d(TAG,file.getAbsolutePath());
+            Log.d(TAG,file.getPath());
+            Log.d(TAG,file.toURI().toString());
             outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
             outputStream.flush();
@@ -387,13 +401,15 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
             Uri uri = Uri.fromFile(file);
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
             WritableMap event = Arguments.createMap();
-            event.putString("uri", uri.getPath());
+            event.putString("uri", uri.toString());
             event.putString("path", file.getAbsolutePath());
 
             mEventEmitter.receiveEvent(getId(), Events.EVENT_VIDEO_SAVE_BITMAP.toString(), event);
         } catch (FileNotFoundException e) {
+            Log.e(TAG,e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            Log.e(TAG,e.getMessage());
             e.printStackTrace();
         }
 
@@ -422,7 +438,7 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
             Uri uri = Uri.fromFile(file);
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
 
-            event.putString("recordScreenshotURL", uri.getPath());
+            event.putString("recordScreenshotURL", uri.toString());
             event.putString("recordScreenshotPath", file.getAbsolutePath());
 
         } catch (FileNotFoundException e) {
@@ -464,7 +480,7 @@ public class ReactKSYVideoView extends RelativeLayout implements LifecycleEventL
         }
         mMediaRecorder.start(); // 开始录制
 //        WritableMap event = Arguments.createMap();
-        event.putString("uri", outputPath);
+        event.putString("uri", videoFile.toURI().toString());
         event.putString("path", videoFile.getAbsolutePath());
         event.putString("fileName", videoName);
         event.putDouble("startTime", startTime);

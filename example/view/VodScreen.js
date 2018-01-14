@@ -20,6 +20,10 @@ import {
 import KSYVideo from 'react-native-ksyvideo';
 import ProgressController from './ProgressController';
 
+var Dimensions = require('Dimensions');
+
+var {width, height} = Dimensions.get('window');
+
 export default class VodScreen extends Component {
     constructor(props) {
       super(props);
@@ -114,7 +118,7 @@ export default class VodScreen extends Component {
               timeout={{prepareTimeout:60, readTimeout:60}}
               paused={this.state.paused}
               playInBackground={true}
-              controls={true}
+              controls={false}
               onTouch={()=>{
                               if (!this.state.record)
                                 this.setState({showbar: !this.state.showbar})
@@ -181,7 +185,7 @@ const styles = StyleSheet.create({
 
   fullScreen: {
     // position: 'absolute',
-    top: 0,
+    top: 200,
     left: 0,
     bottom: 0,
     right: 0,

@@ -39,7 +39,7 @@ export default class VideoList extends Component {
 
       
       if (Platform.OS === 'android') {
-        RootPath = RNFS.ExternalStorageDirectoryPath;
+        RootPath = RNFS.ExternalStorageDirectoryPath+"/yunkan";
       }else{
         RootPath = RNFS.DocumentDirectoryPath;
       }
@@ -81,7 +81,10 @@ export default class VideoList extends Component {
     }
 
     _onPressScreenshotItemButton=(item)=>{
-      alert(item.name);
+      // alert(item.name);
+      const { navigate } = this.props.navigation;
+      let filePath = "file://"+item.path;
+      navigate('PlayVod', { user: filePath })
     }
 
     _screenshotsRenderItem = ({item}) => {

@@ -103,8 +103,15 @@
                                                [NSNumber numberWithDouble:_videoBitrate * 1000], AVVideoAverageBitRateKey,
                                                nil];
         NSLog(@"videoCompressionProps:%@",videoCompressionProps);
+        NSString *newAVVideoCodecH264 = nil;
+        if (@available(iOS 11.0, *)){
+            newAVVideoCodecH264 = AVVideoCodecTypeH264;
+        }else{
+            newAVVideoCodecH264 = AVVideoCodecH264;
+        }
+        
         NSDictionary *videoSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-                                       AVVideoCodecTypeH264, AVVideoCodecKey,
+                                       newAVVideoCodecH264, AVVideoCodecKey,
                                        [videoMeta objectForKey:kKSYPLYVideoWidth], AVVideoWidthKey,
                                        [videoMeta objectForKey:kKSYPLYVideoHeight], AVVideoHeightKey,
                                        videoCompressionProps, AVVideoCompressionPropertiesKey,

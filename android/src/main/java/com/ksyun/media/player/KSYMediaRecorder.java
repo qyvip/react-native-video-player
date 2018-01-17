@@ -751,7 +751,11 @@ public class KSYMediaRecorder {
     }
 
     private boolean isSupportPlanarYUV() {
-        return mVideoEncoderColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            return mVideoEncoderColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible;
+        }else{
+            return mVideoEncoderColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
+        }
     }
 
     private class QueueItem {

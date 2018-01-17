@@ -359,7 +359,7 @@ public class KSYMediaRecorder {
         boolean isAfterLollipop = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
         Log.d(TAG,"isAfterLollipop:"+isAfterLollipop);
         if (!isAfterLollipop)
-            mVideoEncoderColorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible;
+            mVideoEncoderColorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
         else {
             mVideoEncoderColorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible;
             MediaCodecList mcl = new MediaCodecList(MediaCodecList.REGULAR_CODECS);

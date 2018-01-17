@@ -1,5 +1,8 @@
 ## 更新内容说明
 
+### 2018-01-17
+修改安卓端API19时，闪退问题，19改回COLOR_FormatYUV420Planar编码
+
 ### 2018-01-15
 按官方方法，修改IOS端通过style属性来控制KSYVideo，取消videoframe属性
 

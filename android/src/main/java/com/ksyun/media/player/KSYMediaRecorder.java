@@ -325,7 +325,13 @@ public class KSYMediaRecorder {
 
 
         mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_MIME_TYPE);
-        mVideoEncoder.configure(videoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        try {
+            mVideoEncoder.configure(videoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        }catch (Exception e){
+            Log.d(TAG,"mVideoEncoder.configure:error:"+e.getMessage());
+            Log.d(TAG,"mVideoEncoder.configure:error:"+e.toString());
+
+        }
         mVideoEncoder.start();
         mVideoBufferInfo = new MediaCodec.BufferInfo();
 
@@ -357,23 +363,77 @@ public class KSYMediaRecorder {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private int getVideoEncodeColorFormat() {
         boolean isAfterLollipop = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-        Log.d(TAG,"isAfterLollipop:"+isAfterLollipop);
-        if (!isAfterLollipop)
+        Log.d(TAG, "isAfterLollipop:" + isAfterLollipop);
+        Log.d(TAG, "Build.VERSION.SDK_INT:" + Build.VERSION.SDK_INT);
+        Log.d(TAG, "android.os.Build.VERSION.RELEASE;:" + android.os.Build.VERSION.RELEASE);
+        Log.d(TAG, "android.os.Build.BRAND:" + android.os.Build.BRAND);
+        Log.d(TAG, "android.os.Build.MODEL:" + android.os.Build.MODEL);
+
+
+        if (!isAfterLollipop) {
             mVideoEncoderColorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
-        else {
+            MediaCodecInfo mci = null;
+            MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, mVideoWidth, mVideoHeight);
+
+            int nbCodecs = MediaCodecList.getCodecCount();
+            Log.d(TAG, "nbCodecs:" + nbCodecs);
+
+            MediaCodecInfo.CodecCapabilities codecCapabilities = null;
+
+            for (int i = 0; i < nbCodecs; i++) {
+                mci = MediaCodecList.getCodecInfoAt(i);
+                String encoderName = mci.getName();
+                if (!mci.isEncoder()) {
+                    continue;
+                }
+                String[] types = mci.getSupportedTypes();
+                for (int j = 0; j < types.length; j++) {
+
+                    if (types[j].equalsIgnoreCase(VIDEO_MIME_TYPE)){
+                        Log.d(TAG, String.format("mci1 supportedTypes - vencoder : %s  types: %s", mci.getName(), types[j]));
+//                        if (mci.getName().contains(VIDEO_MIME_TYPE)) {
+                            codecCapabilities = mci.getCapabilitiesForType(VIDEO_MIME_TYPE);
+                            break;
+//                        }
+                    }
+
+                }
+            }
+
+            if (codecCapabilities == null || codecCapabilities.colorFormats == null)
+                return mVideoEncoderColorFormat;
+
+            for (int color : codecCapabilities.colorFormats) {
+
+                Log.i(TAG, String.format("vencoder %s supports color fomart 0x%x(%d)", mci.getName(), color, color));
+                if (color >= MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar && color <= MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
+                    if (color > mVideoEncoderColorFormat) {
+                        mVideoEncoderColorFormat = color;
+                        return mVideoEncoderColorFormat;
+                    }
+                }
+            }
+            for (int i = 0; i < codecCapabilities.profileLevels.length; i++) {
+                MediaCodecInfo.CodecProfileLevel pl = codecCapabilities.profileLevels[i];
+                Log.i(TAG, String.format("vencoder %s support profile %d, level %d", mci.getName(), pl.profile, pl.level));
+            }
+            Log.i(TAG, String.format("vencoder %s choose color format 0x%x(%d)", mci.getName(), mVideoEncoderColorFormat, mVideoEncoderColorFormat));
+
+//            mVideoEncoderColorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
+        } else {
             mVideoEncoderColorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible;
             MediaCodecList mcl = new MediaCodecList(MediaCodecList.REGULAR_CODECS);
             MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, mVideoWidth, mVideoHeight);
             String encoderName = mcl.findEncoderForFormat(format);
 
 
-            Log.d(TAG,"mcl:"+mcl);
-            Log.d(TAG,"format:"+format);
-            Log.d(TAG,"encoderName:"+encoderName);
+            Log.d(TAG, "mcl:" + mcl);
+            Log.d(TAG, "format:" + format);
+            Log.d(TAG, "encoderName:" + encoderName);
 
             MediaCodecInfo.CodecCapabilities codecCapabilities = null;
             for (MediaCodecInfo info : mcl.getCodecInfos()) {
-                Log.d(TAG,"info.getName():"+encoderName+" - "+info.getName());
+                Log.d(TAG, "info.getName():" + encoderName + " - " + info.getName());
                 if (info.getName().equals(encoderName)) {
                     codecCapabilities = info.getCapabilitiesForType(VIDEO_MIME_TYPE);
                     break;
@@ -384,7 +444,7 @@ public class KSYMediaRecorder {
                 return mVideoEncoderColorFormat;
 
             for (int color : codecCapabilities.colorFormats) {
-                Log.d(TAG,"color:"+color+" - "+MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
+                Log.d(TAG, "color:" + color + " - " + MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
                 if (color == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible) {
                     mVideoEncoderColorFormat = color;
                     return mVideoEncoderColorFormat;
@@ -392,7 +452,7 @@ public class KSYMediaRecorder {
             }
         }
 
-        Log.d(TAG,"mVideoEncoderColorFormat:"+mVideoEncoderColorFormat);
+        Log.d(TAG, "mVideoEncoderColorFormat:" + mVideoEncoderColorFormat);
 
         return mVideoEncoderColorFormat;
     }
@@ -534,6 +594,7 @@ public class KSYMediaRecorder {
                         if (inputBuffer == null)
                             throw new RuntimeException("Video Encoder Input Buffer is null!");
                         inputBuffer.clear();
+
                         inputBuffer.put(item.mByteBuffer.array());
 
                         mVideoEncoder.queueInputBuffer(encoderIndex, 0, item.mByteBuffer.array().length, item.mDataPts, 0);
@@ -754,8 +815,10 @@ public class KSYMediaRecorder {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             return mVideoEncoderColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible;
         }else{
-            return mVideoEncoderColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
+//            return mVideoEncoderColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
+            return mVideoEncoderColorFormat >= MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
         }
+
     }
 
     private class QueueItem {

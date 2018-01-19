@@ -1,5 +1,9 @@
 ## 更新内容说明
 
+### 2018-01-19
+解决在华为荣耀机型4.4.4  api19上不支持COLOR_FormatYUV420Planar问题
+
+
 ### 2018-01-17
 修改安卓端API19时，闪退问题，19改回COLOR_FormatYUV420Planar编码
 isSupportPlanarYUV增加版本判断
